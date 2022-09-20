@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:sistema_ordem_servico/visao/export_visao.dart';
+import 'package:sistema_ordem_servico/visao/funcionario_dados.dart';
 import 'form_funcionario.dart';
 import 'package:sistema_ordem_servico/modelo/funcionario.dart';
 import 'package:sistema_ordem_servico/controle/controle_funcionario.dart';
@@ -22,7 +23,7 @@ class _ListFuncionarioState extends State<ListFuncionario> {
     });
   }
 
-  Widget _listaFuncionario(Funcionario funcionario) {
+  Widget _listaFuncionario(Funcionario funcionario, int indice) {
     return Card(
         elevation: 15,
         child: Container(
@@ -31,7 +32,7 @@ class _ListFuncionarioState extends State<ListFuncionario> {
           child: ListTile(
             leading: CircleAvatar(
               child: Text(
-                funcionario.id.toString(),
+                "${indice + 1}",
                 style: TextStyle(fontWeight: FontWeight.bold),
               ),
             ),
@@ -47,7 +48,14 @@ class _ListFuncionarioState extends State<ListFuncionario> {
                       Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => FormFuncionario()));
+                              builder: (context) => FuncionarioDados(
+                                    controle: _controle,
+                                    onSaved: () {
+                                      setState(() {
+                                        _controle.carregarLista();
+                                      });
+                                    },
+                                  )));
                     });
                   },
                   icon: Icon(Icons.edit),
@@ -120,8 +128,17 @@ class _ListFuncionarioState extends State<ListFuncionario> {
           IconButton(
               onPressed: () {
                 _controle.funcionarioEmEdicao = Funcionario();
-                Navigator.push(context,
-                    MaterialPageRoute(builder: (context) => FormFuncionario()));
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => FuncionarioDados(
+                              controle: _controle,
+                              onSaved: () {
+                                setState(() {
+                                  _controle.carregarLista();
+                                });
+                              },
+                            )));
               },
               icon: Icon(Icons.add))
         ],
@@ -138,7 +155,8 @@ class _ListFuncionarioState extends State<ListFuncionario> {
             return ListView.builder(
                 itemCount: _controle.funcionarios.length,
                 itemBuilder: (BuildContext context, int index) {
-                  return _listaFuncionario(_controle.funcionarios[index]);
+                  return _listaFuncionario(
+                      _controle.funcionarios[index], index);
                 });
           }
           return Center(

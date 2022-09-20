@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:sistema_ordem_servico/visao/contato_form.dart';
+import 'package:sistema_ordem_servico/visao/contato_form_cliente.dart';
 import 'package:sistema_ordem_servico/visao/export_visao.dart';
 
 import '../controle/controle_cliente.dart';
@@ -37,7 +37,7 @@ class _ClienteDadosState extends State<ClienteDados> {
             controle: widget.controle,
             onSaved: widget.onSaved,
           ),
-          ContatoForm(
+          ContatoClienteForm(
             controle: widget.controle,
             onSaved: widget.onSaved,
           )

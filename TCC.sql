@@ -20,6 +20,19 @@ create table pessoa(
 	registroAtivo boolean default true
 );
 
+create table funcionario(
+	id serial primary key,
+	nome varchar(80),
+	funcao varchar(40),
+	endereco varchar(80),
+	bairro varchar(45),
+	cidade varchar(45),
+	uf varchar(2),
+	cep varchar(8),
+	dataCadastro DATE,
+	obs varchar(300),
+	);
+
 create table formaPagamento (
 	id serial primary key,
 	nome varchar(45),
@@ -41,12 +54,10 @@ create table categoria (
 
 create table contato (
 	id serial primary key,
-	telefone varchar(14),
-	whatsappp varchar(14),
-	email varchar(100),
-	skype varchar(75),
-	contato varchar(30),
+	numero varchar(14),
+	tipo varchar(14),
 	pessoa_id integer references pessoa(id),
+	funcionario_id integer references funcionario(id),
 	registroAtivo boolean default true
 );
 

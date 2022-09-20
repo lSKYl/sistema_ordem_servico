@@ -13,7 +13,8 @@ class CustomTextField extends StatelessWidget {
       this.onSaved,
       this.onChanged,
       required this.obscureText,
-      this.maxlines})
+      this.maxlines,
+      this.maxlength})
       : super(key: key);
   final String label;
   final Icon? icon;
@@ -25,6 +26,7 @@ class CustomTextField extends StatelessWidget {
   final bool obscureText;
   final String? initialvalue;
   final int? maxlines;
+  final int? maxlength;
 
   @override
   Widget build(BuildContext context) {

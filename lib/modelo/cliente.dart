@@ -16,6 +16,8 @@ class Cliente {
   String? numeroRG;
   DateTime dataCadastro = DateTime.now();
   String? obs;
+  String? email;
+  String? skype;
   bool tipocC = true;
   bool tipoF = false;
   bool registroAtivo = true;

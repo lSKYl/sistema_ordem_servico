@@ -1,34 +1,93 @@
-import 'package:date_format/date_format.dart';
 import 'package:flutter/material.dart';
-import 'package:sistema_ordem_servico/widgets/export_widgets.dart';
+import 'package:sistema_ordem_servico/controle/controle_funcionario.dart';
 
-import '../controle/controle_cliente.dart';
 import '../modelo/contato.dart';
+import '../widgets/text_form_field.dart';
 
-class ContatoForm extends StatefulWidget {
-  ControlePessoa? controle;
+class ContatoFuncForm extends StatefulWidget {
+  ContatoFuncForm({super.key, this.controle, this.onSaved});
+  ControleFuncionario? controle;
   Function()? onSaved;
-  ContatoForm({Key? key, this.controle, this.onSaved}) : super(key: key);
 
   @override
-  State<ContatoForm> createState() => _ContatoFormState();
+  State<ContatoFuncForm> createState() => _ContatoFuncFormState();
 }
 
-class _ContatoFormState extends State<ContatoForm> {
+class _ContatoFuncFormState extends State<ContatoFuncForm> {
   final _chaveForm = GlobalKey<FormState>();
+
   Widget _listaContatos(Contato contato, int indice) {
     return Container(
       decoration: const BoxDecoration(
           border: Border.symmetric(horizontal: BorderSide())),
       child: ListTile(
-        contentPadding: const EdgeInsets.only(left: 205, right: 205),
-        title: Text(
-          contato.numero!,
-          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+        title: Row(
+          children: [
+            SizedBox(
+              width: 195,
+            ),
+            Text(
+              contato.numero!,
+              textAlign: TextAlign.center,
+              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+            ),
+          ],
         ),
-        trailing: Text(
-          contato.tipo!,
-          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+        trailing: SizedBox(
+          width: 260,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(contato.tipo!,
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(
+                      fontWeight: FontWeight.bold, fontSize: 18)),
+              IconButton(
+                icon: const Icon(Icons.delete),
+                onPressed: () {
+                  showDialog(
+                      context: context,
+                      builder: (BuildContext builder) {
+                        // ignore: prefer_const_constructors
+                        return AlertDialog(
+                          shape: const RoundedRectangleBorder(
+                            borderRadius: BorderRadius.all(Radius.circular(20)),
+                          ),
+                          title: const Text('ATENÇÃO'),
+                          content: const Text(
+                            'Deseja realmente excluir este contato ?',
+                            textAlign: TextAlign.center,
+                          ),
+                          actionsAlignment: MainAxisAlignment.center,
+                          actions: [
+                            TextButton(
+                                onPressed: () {
+                                  setState(() {
+                                    widget
+                                        .controle!.funcionarioEmEdicao.contatos
+                                        .removeWhere((element) =>
+                                            element.numero == contato.numero);
+                                    Navigator.of(context).pop();
+                                  });
+                                },
+                                child: Text('SIM')),
+                            const SizedBox(
+                              width: 20,
+                              height: 20,
+                            ),
+                            TextButton(
+                                onPressed: () {
+                                  Navigator.of(context).pop();
+                                },
+                                child: const Text('NÃO'))
+                          ],
+                        );
+                      });
+                },
+                color: Colors.red,
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -48,6 +107,7 @@ class _ContatoFormState extends State<ContatoForm> {
     }
   }
 
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       floatingActionButton: FloatingActionButton(
@@ -76,6 +136,7 @@ class _ContatoFormState extends State<ContatoForm> {
                             onSaved: (String? value) {
                               contato.numero = value;
                             },
+                            maxlength: 14,
                           ),
                           const SizedBox(
                             height: 10,
@@ -87,6 +148,7 @@ class _ContatoFormState extends State<ContatoForm> {
                             onSaved: (String? value) {
                               contato.tipo = value;
                             },
+                            maxlength: 14,
                           )
                         ],
                       ),
@@ -97,10 +159,9 @@ class _ContatoFormState extends State<ContatoForm> {
                     TextButton(
                         onPressed: () {
                           salvar(context);
-                          widget.controle!.clienteEmEdicao.contatos
+                          widget.controle!.funcionarioEmEdicao.contatos
                               .add(contato);
                           setState(() {
-                            widget.controle!.contatos.add(contato);
                             Navigator.of(context).pop();
                           });
                         },
@@ -159,31 +220,23 @@ class _ContatoFormState extends State<ContatoForm> {
                 ],
               ),
               Expanded(
-                child: FutureBuilder(
-                  future: widget.controle!.contatosPesquisados,
-                  builder:
-                      (BuildContext context, AsyncSnapshot<List> snapshot) {
-                    if (snapshot.hasError) {
-                      return Text("${snapshot.error}");
-                    }
-                    if (snapshot.hasData) {
-                      widget.controle!.contatos =
-                          snapshot.data as List<Contato>;
-
-                      return ListView.builder(
-                        itemCount: widget.controle!.contatos.length,
-                        itemBuilder: (BuildContext context, int index) {
-                          return _listaContatos(
-                              widget.controle!.contatos[index], index);
-                        },
-                      );
-                    }
-                    return const Center(
-                      child: Text('Carregando dados'),
-                    );
-                  },
-                ),
-              ),
+                  child: widget.controle!.funcionarioEmEdicao.contatos.isEmpty
+                      ? const Center(
+                          child: Text(
+                            'Não há contatos cadastrados',
+                            style: TextStyle(
+                                fontSize: 20, fontWeight: FontWeight.bold),
+                          ),
+                        )
+                      : ListView.builder(
+                          itemCount: widget
+                              .controle!.funcionarioEmEdicao.contatos.length,
+                          itemBuilder: ((context, index) {
+                            final Contato contato = widget
+                                .controle!.funcionarioEmEdicao.contatos
+                                .elementAt(index);
+                            return _listaContatos(contato, index);
+                          }))),
             ],
           ),
         ),

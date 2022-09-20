@@ -58,8 +58,8 @@ class ClienteDAO {
             cliente.id = row["pessoa"]?["id"];
           }
         }
-        // await ctx.query("""DELETE FROM contato where pessoa_id = @id""",
-        //     substitutionValues: {"id": cliente.id});
+        await ctx.query("""DELETE FROM contato where pessoa_id = @id""",
+            substitutionValues: {"id": cliente.id});
         for (Contato cont in cliente.contatos) {
           await ctx
               .query("""INSERT INTO contato (tipo, numero, pessoa_id) VALUES (@tipo, @numero, @pessoa_id)""",
@@ -113,6 +113,18 @@ class ClienteDAO {
       cliente.complemento = row["pessoa"]?["complemento"];
       cliente.obs = row["pessoa"]?["obs"];
     }
+
+    List<Map<String, Map<String, dynamic>>> cont =
+        await (await getConexaoPostgre()).mappedResultsQuery(
+            """SELECT id, numero, tipo from contato where pessoa_id = @id""",
+            substitutionValues: {"id": cliente.id});
+    for (final row in cont) {
+      Contato contato = Contato();
+      contato.id = row["contato"]?["id"];
+      contato.numero = row["contato"]?["numero"];
+      contato.tipo = row["contato"]?["tipo"];
+      cliente.contatos.add(contato);
+    }
     return cliente;
   }
 
@@ -161,22 +173,5 @@ class ClienteDAO {
       print(e.toString());
     }
     return clientes;
-  }
-
-  Future<List<Contato>> carregarCont(int id) async {
-    List<Contato> contatos = [];
-
-    List<Map<String, Map<String, dynamic>>> cont =
-        await (await getConexaoPostgre()).mappedResultsQuery(
-            """SELECT id, numero, tipo from contato where pessoa_id = @id""",
-            substitutionValues: {"id": id});
-    for (final row in cont) {
-      Contato contato = Contato();
-      contato.id = row["contato"]?["id"];
-      contato.numero = row["contato"]?["numero"];
-      contato.tipo = row["contato"]?["tipo"];
-      contatos.add(contato);
-    }
-    return contatos;
   }
 }

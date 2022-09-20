@@ -41,6 +41,7 @@ dependencies:
   validatorless: ^1.2.1
   date_format: ^2.0.6
   intl: ^0.17.0
+  crypt: ^4.2.1
 
 dev_dependencies:
   flutter_test:

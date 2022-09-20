@@ -49,7 +49,7 @@ class _FormClienteState extends State<FormCliente> {
 
   String? validar(text) {
     if (text == null || text.isEmpty) {
-      return 'Este campo é obrigatório';
+      return 'Campo obrigatório';
     }
     return null;
   }
@@ -62,8 +62,8 @@ class _FormClienteState extends State<FormCliente> {
           onPressed: () {
             salvar(context);
           },
-          label: Text('SALVAR'),
-          icon: Icon(Icons.add),
+          label: const Text('SALVAR'),
+          icon: const Icon(Icons.add),
         ),
         body: ListView(
           children: [
@@ -122,6 +122,8 @@ class _FormClienteState extends State<FormCliente> {
                       onSaved: (String? value) {
                         widget.controle?.clienteEmEdicao.nome = value;
                       },
+                      validator: validar,
+                      maxlength: 80,
                     ),
                     // ignore: prefer_const_constructors
                     SizedBox(
@@ -134,6 +136,8 @@ class _FormClienteState extends State<FormCliente> {
                       onSaved: (String? value) {
                         widget.controle?.clienteEmEdicao.cpf = value;
                       },
+                      validator: validar,
+                      maxlength: 11,
                     ),
                     const SizedBox(
                       height: 10,
@@ -145,6 +149,7 @@ class _FormClienteState extends State<FormCliente> {
                       onSaved: (String? value) {
                         widget.controle?.clienteEmEdicao.numeroRG = value;
                       },
+                      maxlength: 9,
                     ),
                     const SizedBox(
                       height: 10,
@@ -159,6 +164,7 @@ class _FormClienteState extends State<FormCliente> {
                       onSaved: (String? value) {
                         widget.controle?.clienteEmEdicao.nomeFantasia = value;
                       },
+                      maxlength: 100,
                     ),
                     // ignore: prefer_const_constructors
                     SizedBox(
@@ -172,6 +178,7 @@ class _FormClienteState extends State<FormCliente> {
                         widget.controle?.clienteEmEdicao.cnpj = value;
                       },
                       initialvalue: widget.controle?.clienteEmEdicao.cnpj,
+                      maxlength: 14,
                     ),
                     const SizedBox(
                       height: 10,
@@ -183,6 +190,7 @@ class _FormClienteState extends State<FormCliente> {
                         widget.controle?.clienteEmEdicao.ie = value;
                       },
                       initialvalue: widget.controle?.clienteEmEdicao.ie,
+                      maxlength: 10,
                     ),
                     const SizedBox(
                       height: 10,
@@ -195,6 +203,7 @@ class _FormClienteState extends State<FormCliente> {
                       widget.controle?.clienteEmEdicao.endereco = value;
                     },
                     initialvalue: widget.controle?.clienteEmEdicao.endereco,
+                    maxlength: 80,
                   ),
                   const SizedBox(
                     height: 10,
@@ -206,6 +215,7 @@ class _FormClienteState extends State<FormCliente> {
                       widget.controle?.clienteEmEdicao.bairro = value;
                     },
                     initialvalue: widget.controle?.clienteEmEdicao.bairro,
+                    maxlength: 45,
                   ),
                   const SizedBox(
                     height: 10,
@@ -217,6 +227,7 @@ class _FormClienteState extends State<FormCliente> {
                       widget.controle?.clienteEmEdicao.complemento = value;
                     },
                     initialvalue: widget.controle?.clienteEmEdicao.complemento,
+                    maxlength: 45,
                   ),
                   const SizedBox(
                     height: 10,
@@ -228,6 +239,7 @@ class _FormClienteState extends State<FormCliente> {
                       widget.controle?.clienteEmEdicao.cidade = value;
                     },
                     initialvalue: widget.controle?.clienteEmEdicao.cidade,
+                    maxlength: 45,
                   ),
                   const SizedBox(
                     height: 10,
@@ -239,6 +251,7 @@ class _FormClienteState extends State<FormCliente> {
                       widget.controle?.clienteEmEdicao.uf = value;
                     },
                     initialvalue: widget.controle?.clienteEmEdicao.uf,
+                    maxlength: 15,
                   ),
                   const SizedBox(
                     height: 10,
@@ -249,14 +262,31 @@ class _FormClienteState extends State<FormCliente> {
                     onSaved: (String? value) {
                       widget.controle?.clienteEmEdicao.cep = value;
                     },
+                    maxlength: 8,
                     initialvalue: widget.controle?.clienteEmEdicao.cep,
                   ),
                   const SizedBox(
                     height: 10,
                   ),
-                  CustomTextField(label: 'Email', obscureText: false),
+                  CustomTextField(
+                    label: 'Email',
+                    obscureText: false,
+                    onSaved: (String? value) {
+                      widget.controle?.clienteEmEdicao.email = value;
+                    },
+                    initialvalue: widget.controle?.clienteEmEdicao.email,
+                    maxlength: 40,
+                  ),
                   SizedBox(height: 10),
-                  CustomTextField(label: 'Skype', obscureText: false),
+                  CustomTextField(
+                    label: 'Skype',
+                    obscureText: false,
+                    onSaved: (String? value) {
+                      widget.controle?.clienteEmEdicao.skype = value;
+                    },
+                    initialvalue: widget.controle?.clienteEmEdicao.skype,
+                    maxlength: 40,
+                  ),
                   SizedBox(
                     height: 10,
                   ),
@@ -268,6 +298,7 @@ class _FormClienteState extends State<FormCliente> {
                       widget.controle?.clienteEmEdicao.obs = value;
                     },
                     initialvalue: widget.controle?.clienteEmEdicao.obs,
+                    maxlength: 300,
                   )
                 ]),
               ),

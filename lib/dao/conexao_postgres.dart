@@ -3,7 +3,7 @@ import 'package:postgres/postgres.dart';
 PostgreSQLConnection? _conexaoPostGre;
 
 String host = '127.0.0.1';
-String dataBaseName = "SDOS";
+String dataBaseName = "tcc";
 int port = 5432;
 String userName = 'postgres';
 String password = '652512';
