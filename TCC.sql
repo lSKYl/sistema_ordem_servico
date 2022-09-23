@@ -13,25 +13,24 @@ create table pessoa(
 	ie varchar(10),
 	numeroRG varchar(9),
 	dataCadastro DATE,
+	email varchar(100),
+	skype varchar(75),
 	obs varchar(300),
 	tipoCLI boolean default false,
 	tipoFOR boolean default false,
-	tipoFUN boolean default false,
 	registroAtivo boolean default true
 );
 
-create table funcionario(
+create table funcionario (
 	id serial primary key,
 	nome varchar(80),
 	funcao varchar(40),
 	endereco varchar(80),
 	bairro varchar(45),
-	cidade varchar(45),
-	uf varchar(2),
-	cep varchar(8),
-	dataCadastro DATE,
+	dataCadastro date,
 	obs varchar(300),
-	);
+	registroAtivo boolean default true
+);
 
 create table formaPagamento (
 	id serial primary key,
@@ -45,26 +44,11 @@ create table marca (
 	registroAtivo boolean default true
 );
 
-create table categoria (
-	id serial primary key,
-	descricao varchar(30),
-	obs varchar(200),
-	registroAtivo boolean default true
-);
-
 create table contato (
 	id serial primary key,
-	numero varchar(14),
-	tipo varchar(14),
-	pessoa_id integer references pessoa(id),
+	telefone varchar(20),
+	tipo varchar(30),
 	funcionario_id integer references funcionario(id),
-	registroAtivo boolean default true
-);
-
-create table cidade (
-	id serial primary key,
-	nome varchar(45),
-	uf varchar(2),
 	pessoa_id integer references pessoa(id),
 	registroAtivo boolean default true
 );
@@ -91,7 +75,8 @@ create table produtoServico (
 	tipoSER boolean default false,
 	dataAtual date,
 	custo numeric (14,2),
-	categoria_id integer references categoria(id),
+	precoAvista numeric (14,2),
+	prevoPrazo numeric (14,2),
 	marca_id integer references marca(id),
 	registroAtivvo boolean default true
 );
@@ -111,6 +96,7 @@ create table ordemServico (
 	prevEntrega date,
 	situacaoAtual varchar(45),
 	pessoa_id integer references pessoa(id),
+	funcionario_id integer references funcionario(id),
 	registroAtivo boolean default true,
 	tipoC boolean default false,
 	tipoOS boolean default true
@@ -136,4 +122,12 @@ create table formaPagOs (
 	valorPago numeric(14,2)
 );
 
-
+create table usuario (
+    id serial primary key,
+    apelido varchar(40),
+    usuario varchar(40),
+	senha varchar(40),
+	nivelacesso varchar(15),
+	funcionaio_id integer references funcionario(id),
+	registroAtivo boolean default true
+);
