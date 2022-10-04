@@ -16,8 +16,6 @@ class _FormFuncionarioState extends State<FormFuncionario> {
   final _chaveForm = GlobalKey<FormState>();
   DateTime date = DateTime.now();
   var formatterDate = DateFormat('dd/MM/yy');
-  String? confirmarSenha;
-  String? senha;
 
   Future<void> salvar(BuildContext context) async {
     if (_chaveForm.currentState != null &&

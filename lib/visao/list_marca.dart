@@ -67,7 +67,7 @@ class _ListMarcaState extends State<ListMarca> {
                                 )));
                   });
                 },
-                icon: Icon(Icons.edit),
+                icon: const Icon(Icons.edit),
                 color: Colors.orange,
               ),
               IconButton(

@@ -1,5 +1,5 @@
 import 'conexao_postgres.dart';
-import 'package:sistema_ordem_servico/modelo/cliente.dart';
+import 'package:sistema_ordem_servico/modelo/pessoa.dart';
 import 'package:sistema_ordem_servico/modelo/contato.dart';
 
 class ClienteDAO {

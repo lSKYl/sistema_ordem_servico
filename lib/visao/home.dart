@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:sistema_ordem_servico/visao/list_cliente.dart';
 import 'package:sistema_ordem_servico/visao/list_funcionario.dart';
 import 'package:sistema_ordem_servico/visao/list_marca.dart';
+import 'package:sistema_ordem_servico/visao/list_produtos.dart';
 import 'package:sistema_ordem_servico/widgets/export_widgets.dart';
 import 'export_visao.dart';
 
@@ -43,7 +44,7 @@ class DashBoard extends StatelessWidget {
                         ),
                         SizedBox(width: 15),
                         Button(
-                            formulario: UserList(),
+                            formulario: ListProduto(),
                             icon: Icon(Icons.shopping_basket),
                             text: 'Produtos e Serviços'),
                         SizedBox(width: 15),

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:sistema_ordem_servico/controle/controle_cliente.dart';
-import 'package:sistema_ordem_servico/modelo/cliente.dart';
+import 'package:sistema_ordem_servico/modelo/pessoa.dart';
 import 'package:sistema_ordem_servico/modelo/contato.dart';
 import 'package:sistema_ordem_servico/widgets/export_widgets.dart';
 import 'package:string_validator/string_validator.dart';

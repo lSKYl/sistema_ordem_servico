@@ -1,14 +1,5 @@
-import 'contato.dart';
+import 'package:sistema_ordem_servico/modelo/pessoa.dart';
 
-class Funcionario {
-  int id = 0;
-  String? nome;
+class Funcionario extends Pessoa {
   String? funcao;
-  DateTime dataCadastro = DateTime.now();
-  String? obs;
-  String? endereco;
-  String? bairro;
-  bool registroAtivo = true;
-
-  List<Contato> contatos = [];
 }

@@ -120,6 +120,25 @@ class _ListFuncionarioState extends State<ListFuncionario> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: () {
+          _controle.funcionarioEmEdicao = Funcionario();
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => FuncionarioDados(
+                        controle: _controle,
+                        onSaved: () {
+                          setState(() {
+                            _controle.carregarLista();
+                          });
+                        },
+                      )));
+        },
+        label: const Text('Adicionar'),
+        icon: const Icon(Icons.add),
+      ),
       backgroundColor: Colors.grey[300],
       appBar: AppBar(
         centerTitle: true,

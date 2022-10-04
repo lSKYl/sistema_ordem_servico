@@ -3,7 +3,7 @@ import 'package:sistema_ordem_servico/visao/cliente_dados.dart';
 import 'package:sistema_ordem_servico/visao/export_visao.dart';
 import 'package:sistema_ordem_servico/controle/controle_cliente.dart';
 import 'form_cliente.dart';
-import '../modelo/cliente.dart';
+import '../modelo/pessoa.dart';
 
 class ListCliente extends StatefulWidget {
   ListCliente({Key? key}) : super(key: key);

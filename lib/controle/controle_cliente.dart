@@ -1,4 +1,4 @@
-import 'package:sistema_ordem_servico/modelo/cliente.dart';
+import 'package:sistema_ordem_servico/modelo/pessoa.dart';
 import 'package:sistema_ordem_servico/dao/cliente_dao.dart';
 
 class ControlePessoa {

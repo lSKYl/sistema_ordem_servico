@@ -1,7 +1,5 @@
-import 'package:flutter/foundation.dart';
 import 'package:sistema_ordem_servico/dao/conexao_postgres.dart';
 import 'package:sistema_ordem_servico/modelo/marca.dart';
-import 'package:postgres/postgres.dart';
 
 class MarcaDAO {
   //Grava ou altera a marca no banco de dados;
@@ -73,7 +71,7 @@ class MarcaDAO {
     try {
       List<Map<String, Map<String, dynamic>>> results =
           await (await getConexaoPostgre()).mappedResultsQuery(
-              """SELECT id, nome from marca where registroativo = true order by id""");
+              """SELECT id, nome from marca where registroativo = true order by nome""");
 
       for (final row in results) {
         Marca marca = Marca();
