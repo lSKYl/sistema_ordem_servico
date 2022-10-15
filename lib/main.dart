@@ -6,7 +6,6 @@ import 'visao/export_visao.dart';
 
 void main() async {
   runApp(const MyApp());
-  Size size = await DesktopWindow.getWindowSize();
   await DesktopWindow.setFullScreen(true);
 }
 

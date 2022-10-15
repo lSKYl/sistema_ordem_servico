@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:sistema_ordem_servico/visao/export_visao.dart';
 import 'package:sistema_ordem_servico/visao/funcionario_dados.dart';
+import 'package:sistema_ordem_servico/widgets/export_widgets.dart';
 import 'form_funcionario.dart';
 import 'package:sistema_ordem_servico/modelo/funcionario.dart';
 import 'package:sistema_ordem_servico/controle/controle_funcionario.dart';
@@ -24,97 +25,45 @@ class _ListFuncionarioState extends State<ListFuncionario> {
   }
 
   Widget _listaFuncionario(Funcionario funcionario, int indice) {
-    return Card(
-        elevation: 15,
-        child: Container(
-          decoration: BoxDecoration(
-              color: Colors.white, borderRadius: BorderRadius.circular(20)),
-          child: ListTile(
-            leading: CircleAvatar(
-              child: Text(
-                "${indice + 1}",
-                style: TextStyle(fontWeight: FontWeight.bold),
-              ),
-            ),
-            title: Text(funcionario.nome!),
-            subtitle: Text(funcionario.funcao!),
-            trailing: Container(
-              width: 100,
-              child: Row(children: [
-                IconButton(
-                  onPressed: () {
-                    _controle.carregarFuncionario(funcionario).then((value) {
-                      _controle.funcionarioEmEdicao = value;
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => FuncionarioDados(
-                                    controle: _controle,
-                                    onSaved: () {
-                                      setState(() {
-                                        _controle.carregarLista();
-                                      });
-                                    },
-                                  )));
-                    });
-                  },
-                  icon: Icon(Icons.edit),
-                  color: Colors.orange,
-                ),
-                IconButton(
-                  onPressed: () {
-                    showDialog(
-                        context: context,
-                        builder: (BuildContext builder) {
-                          // ignore: prefer_const_constructors
-                          return AlertDialog(
-                            shape: const RoundedRectangleBorder(
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(20)),
-                            ),
-                            title: const Text('ATENÇÃO'),
-                            content: const Text(
-                              'Deseja realmente excluir este funcionario ?',
-                              textAlign: TextAlign.center,
-                            ),
-                            actionsAlignment: MainAxisAlignment.center,
-                            actions: [
-                              TextButton(
-                                  onPressed: () {
-                                    _controle
-                                        .carregarFuncionario(funcionario)
-                                        .then((value) {
-                                      _controle.funcionarioEmEdicao = value;
-                                      _controle.excluirFuncionario().then((_) {
-                                        Navigator.of(context).pop();
-                                        setState(() {
-                                          _controle.funcionarios
-                                              .remove(funcionario);
-                                        });
-                                      });
-                                    });
-                                  },
-                                  child: Text('SIM')),
-                              const SizedBox(
-                                width: 20,
-                                height: 20,
-                              ),
-                              TextButton(
-                                  onPressed: () {
-                                    Navigator.of(context).pop();
-                                  },
-                                  child: const Text('NÃO'))
-                            ],
-                          );
-                        });
-                  },
-                  icon: Icon(Icons.delete),
-                  color: Colors.red,
-                )
-              ]),
-            ),
-          ),
-        ));
+    return CustomListTile(
+      object: funcionario,
+      index: indice + 1,
+      title: Text(
+        funcionario.nome!,
+        style: const TextStyle(fontWeight: FontWeight.bold),
+      ),
+      subtitle: Text(
+        funcionario.funcao!,
+        style: const TextStyle(fontWeight: FontWeight.bold),
+      ),
+      button1: () {
+        _controle.carregarFuncionario(funcionario).then((value) {
+          _controle.funcionarioEmEdicao = value;
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => FuncionarioDados(
+                        controle: _controle,
+                        onSaved: () {
+                          setState(() {
+                            _controle.carregarLista();
+                          });
+                        },
+                      )));
+        });
+      },
+      button2: () {
+        _controle.carregarFuncionario(funcionario).then((value) {
+          _controle.funcionarioEmEdicao = value;
+          _controle.excluirFuncionario().then((_) {
+            Navigator.of(context).pop();
+            setState(() {
+              _controle.funcionarios.remove(funcionario);
+            });
+          });
+        });
+      },
+    );
   }
 
   @override

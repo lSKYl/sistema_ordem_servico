@@ -23,7 +23,7 @@ class _ContatoFuncFormState extends State<ContatoFuncForm> {
       child: ListTile(
         title: Row(
           children: [
-            SizedBox(
+            const SizedBox(
               width: 195,
             ),
             Text(
@@ -131,6 +131,7 @@ class _ContatoFuncFormState extends State<ContatoFuncForm> {
                         children: [
                           CustomTextField(
                             obscureText: false,
+                            readonly: false,
                             label: 'Número',
                             validator: validar,
                             onSaved: (String? value) {
@@ -144,6 +145,7 @@ class _ContatoFuncFormState extends State<ContatoFuncForm> {
                           CustomTextField(
                             label: 'Tipo',
                             obscureText: false,
+                            readonly: false,
                             validator: validar,
                             onSaved: (String? value) {
                               contato.tipo = value;

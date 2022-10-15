@@ -53,7 +53,7 @@ class MarcaDAO {
     List<Marca> marcas = [];
     List<Map<String, Map<String, dynamic>>> results =
         await (await getConexaoPostgre()).mappedResultsQuery(
-            """SELECT id, nome from marca where registroativo = true and lower(nome) like @filtro
+            """SELECT id, nome from marca where registroativo = true and lower(nome) like '%12%'
     order by lower(nome)""",
             substitutionValues: {"filtro": '$filtro'});
 
@@ -71,7 +71,7 @@ class MarcaDAO {
     try {
       List<Map<String, Map<String, dynamic>>> results =
           await (await getConexaoPostgre()).mappedResultsQuery(
-              """SELECT id, nome from marca where registroativo = true order by nome""");
+              """SELECT id, nome from marca where registroativo = true order by id""");
 
       for (final row in results) {
         Marca marca = Marca();

@@ -1,3 +1,4 @@
+import 'package:date_format/date_format.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'package:sistema_ordem_servico/controle/controle_produto.dart';
@@ -21,6 +22,8 @@ class _FormProdutoState extends State<FormProduto> {
   var formatterData = DateFormat('dd/MM/yy');
   static const _locale = 'pt_Br';
   final ControleMarca _controleMarca = ControleMarca();
+  late TextEditingController marcaController = TextEditingController(
+      text: widget.controle!.produtoServicoEmEdicao.marca.nome);
 
   String get _currency =>
       NumberFormat.compactSimpleCurrency(locale: _locale).currencySymbol;
@@ -37,40 +40,49 @@ class _FormProdutoState extends State<FormProduto> {
     }
   }
 
-  FutureBuilder listaMarcas() {
-    return FutureBuilder(
-      future: _controleMarca.marcasPesquisadas,
-      builder: (BuildContext context, AsyncSnapshot snapshot) {
-        if (snapshot.hasError) {
-          return Text("${snapshot.error}");
-        }
-        if (snapshot.hasData) {
-          _controleMarca.marcas = snapshot.data as List<Marca>;
+  Widget listaMarcas() {
+    return SizedBox(
+      width: 500,
+      height: 500,
+      child: FutureBuilder(
+        future: _controleMarca.marcasPesquisadas,
+        builder: (BuildContext context, AsyncSnapshot snapshot) {
+          if (snapshot.hasError) {
+            return Text("${snapshot.error}");
+          }
+          if (snapshot.hasData) {
+            _controleMarca.marcas = snapshot.data as List<Marca>;
 
-          return ListView.builder(
-            itemCount: _controleMarca.marcas.length,
-            itemBuilder: (BuildContext context, int index) {
-              Marca marca = _controleMarca.marcas[index];
-              return Padding(
-                padding: EdgeInsets.only(
-                    left: MediaQuery.of(context).size.width > 1000
-                        ? (MediaQuery.of(context).size.width - 1000) / 2
-                        : 10,
-                    right: MediaQuery.of(context).size.width > 1000
-                        ? (MediaQuery.of(context).size.width - 1000) / 2
-                        : 10),
-                child: CustomListTile(
-                  object: _controleMarca.marcas[index],
-                  nome: marca.nome,
-                ),
-              );
-            },
+            return ListView.builder(
+              itemCount: _controleMarca.marcas.length,
+              itemBuilder: (BuildContext context, int index) {
+                Marca marca = _controleMarca.marcas[index];
+                return SizedBox(
+                  child: ListTileDialog(
+                    object: _controleMarca.marcas[index],
+                    nome: marca.nome!,
+                    subtitulo: "",
+                    indice: index + 1,
+                    onTap: () {
+                      _controleMarca.carregarMarca(marca).then((value) {
+                        setState(() {
+                          marcaController.text = value.nome!;
+
+                          widget.controle!.produtoServicoEmEdicao.marca = value;
+                          Navigator.pop(context);
+                        });
+                      });
+                    },
+                  ),
+                );
+              },
+            );
+          }
+          return const Center(
+            child: Text('Carregando Dados'),
           );
-        }
-        return const Center(
-          child: Text('Carregando Dados'),
-        );
-      },
+        },
+      ),
     );
   }
 
@@ -163,7 +175,9 @@ class _FormProdutoState extends State<FormProduto> {
               CustomTextField(
                 label: "Nome",
                 obscureText: false,
-                initialvalue: widget.controle?.produtoServicoEmEdicao.nome,
+                readonly: false,
+                controller: TextEditingController(
+                    text: widget.controle!.produtoServicoEmEdicao.nome),
                 maxlength: 50,
                 onSaved: (String? value) {
                   widget.controle?.produtoServicoEmEdicao.nome = value;
@@ -178,8 +192,10 @@ class _FormProdutoState extends State<FormProduto> {
                 CustomTextField(
                   label: "Referência Produto",
                   obscureText: false,
-                  initialvalue:
-                      widget.controle?.produtoServicoEmEdicao.referenciaProduto,
+                  readonly: false,
+                  controller: TextEditingController(
+                      text: widget
+                          .controle!.produtoServicoEmEdicao.referenciaProduto),
                   onSaved: (String? value) {
                     widget.controle?.produtoServicoEmEdicao.referenciaProduto =
                         value;
@@ -188,10 +204,10 @@ class _FormProdutoState extends State<FormProduto> {
                 ),
                 const SizedBox(height: 10),
                 CustomTextField(
+                  controller: marcaController,
                   label: "Marca",
                   obscureText: false,
-                  initialvalue:
-                      widget.controle?.produtoServicoEmEdicao.marca.nome,
+                  readonly: true,
                   onTap: (() {
                     setState(() {
                       _controleMarca.carregarLista();
@@ -199,7 +215,10 @@ class _FormProdutoState extends State<FormProduto> {
                     showDialog(
                         context: context,
                         builder: (BuildContext builder) {
-                          return listaMarcas();
+                          return AlertDialog(
+                            title: const Text("Escolha uma marca"),
+                            content: listaMarcas(),
+                          );
                         });
                   }),
                 ),
@@ -207,34 +226,78 @@ class _FormProdutoState extends State<FormProduto> {
                 CustomTextField(
                   label: "UN",
                   obscureText: false,
-                  initialvalue: widget.controle?.produtoServicoEmEdicao.un,
+                  readonly: false,
+                  controller: TextEditingController(
+                      text: widget.controle!.produtoServicoEmEdicao.un),
                   onSaved: (String? value) {
                     widget.controle?.produtoServicoEmEdicao.un = value;
                   },
+                  maxlength: 12,
                 ),
                 const SizedBox(height: 10),
                 CustomTextField(
                   label: 'Descrição Produto',
                   obscureText: false,
-                  initialvalue:
-                      widget.controle?.produtoServicoEmEdicao.descricaoProduto,
+                  readonly: false,
+                  controller: TextEditingController(
+                      text: widget
+                          .controle!.produtoServicoEmEdicao.descricaoProduto),
                   onSaved: (String? value) {
                     widget.controle?.produtoServicoEmEdicao.descricaoProduto =
                         value;
                   },
                   maxlines: 3,
+                  maxlength: 200,
                 ),
                 const SizedBox(height: 10),
                 CustomTextField(
                   label: 'Descrição Adicional do Produto',
                   obscureText: false,
-                  initialvalue: widget.controle?.produtoServicoEmEdicao
-                      .descricaoAdicionalProduto,
+                  readonly: false,
+                  controller: TextEditingController(
+                      text: widget.controle?.produtoServicoEmEdicao
+                          .descricaoAdicionalProduto),
                   onSaved: (String? value) {
                     widget.controle?.produtoServicoEmEdicao
                         .descricaoAdicionalProduto = value;
                   },
                   maxlines: 3,
+                  maxlength: 150,
+                )
+              ],
+              if (!widget.controle!.produtoServicoEmEdicao.tipoProduto ==
+                  true) ...[
+                const SizedBox(
+                  height: 10,
+                ),
+                CustomTextField(
+                  label: 'Descrição do serviço',
+                  obscureText: false,
+                  readonly: false,
+                  maxlines: 3,
+                  controller: TextEditingController(
+                      text: widget
+                          .controle!.produtoServicoEmEdicao.descricaoServico),
+                  onSaved: (String? value) {
+                    widget.controle!.produtoServicoEmEdicao.descricaoServico =
+                        value;
+                  },
+                  maxlength: 200,
+                ),
+                const SizedBox(height: 10),
+                CustomTextField(
+                  label: 'Descrição Adicional do Serviço',
+                  obscureText: false,
+                  readonly: false,
+                  controller: TextEditingController(
+                      text: widget.controle!.produtoServicoEmEdicao
+                          .descricaoAdicionalServico),
+                  onSaved: (String? value) {
+                    widget.controle!.produtoServicoEmEdicao
+                        .descricaoAdicionalServico = value;
+                  },
+                  maxlines: 3,
+                  maxlength: 150,
                 )
               ],
               const SizedBox(
@@ -244,44 +307,48 @@ class _FormProdutoState extends State<FormProduto> {
                 children: [
                   Expanded(
                     child: SizedBox(
-                        width: 200,
-                        height: 200,
+                        width: MediaQuery.of(context).size.width * 0.1,
+                        height: MediaQuery.of(context).size.height * 0.1,
                         child: CustomTextField(
                           label: "Custo",
                           obscureText: false,
+                          readonly: false,
                           prefix: Text(_currency),
+                          controller: TextEditingController(
+                              text: widget
+                                  .controle?.produtoServicoEmEdicao.custo
+                                  .toStringAsFixed(2)
+                                  .replaceAll('.', ',')),
                           keyboardType: const TextInputType.numberWithOptions(
                               decimal: true),
                           input: [formatadorNumeros(), formatadorVirgula()],
-                          initialvalue: widget
-                              .controle?.produtoServicoEmEdicao.custo
-                              .toString()
-                              .replaceAll('.', ','),
                           onSaved: (String? value) {
                             widget.controle?.produtoServicoEmEdicao.custo =
-                                value?.replaceAll(',', '.') as double;
+                                double.parse(value!.replaceAll(',', '.'));
                           },
                         )),
                   ),
                   const SizedBox(width: 10),
                   Expanded(
                     child: SizedBox(
-                      width: 200,
-                      height: 200,
+                      width: MediaQuery.of(context).size.width * 0.1,
+                      height: MediaQuery.of(context).size.height * 0.1,
                       child: CustomTextField(
                         label: "Preço a Vista",
+                        readonly: false,
                         prefix: Text(_currency),
                         obscureText: false,
                         keyboardType: const TextInputType.numberWithOptions(
                             decimal: true),
                         input: [formatadorNumeros(), formatadorVirgula()],
-                        initialvalue: widget
-                            .controle?.produtoServicoEmEdicao.valorVista
-                            .toString()
-                            .replaceAll('.', ','),
+                        controller: TextEditingController(
+                            text: widget
+                                .controle?.produtoServicoEmEdicao.valorVista
+                                .toStringAsFixed(2)
+                                .replaceAll('.', ',')),
                         onSaved: (String? value) {
                           widget.controle?.produtoServicoEmEdicao.valorVista =
-                              value as double;
+                              double.parse(value!.replaceAll(',', '.'));
                         },
                       ),
                     ),
@@ -289,29 +356,42 @@ class _FormProdutoState extends State<FormProduto> {
                   const SizedBox(width: 10),
                   Expanded(
                     child: SizedBox(
-                      width: 200,
-                      height: 200,
+                      width: MediaQuery.of(context).size.width * 0.1,
+                      height: MediaQuery.of(context).size.height * 0.1,
                       child: CustomTextField(
+                        readonly: false,
                         label: "Preço a Prazo",
                         obscureText: false,
+                        controller: TextEditingController(
+                            text: widget
+                                .controle?.produtoServicoEmEdicao.valorPrazo
+                                .toStringAsFixed(2)
+                                .replaceAll('.', ',')),
                         prefix: Text(_currency),
                         keyboardType: const TextInputType.numberWithOptions(
                             decimal: true),
                         input: [formatadorNumeros(), formatadorVirgula()],
-                        initialvalue: widget
-                            .controle?.produtoServicoEmEdicao.valorPrazo
-                            .toString()
-                            .replaceAll('.', ','),
                         onSaved: (value) {
                           widget.controle?.produtoServicoEmEdicao.valorPrazo =
-                              value as double;
+                              double.parse(value!.replaceAll(',', '.'));
                         },
                       ),
                     ),
                   ),
                 ],
               ),
-              const SizedBox(height: 10),
+              CustomTextField(
+                label: 'Obs',
+                obscureText: false,
+                readonly: false,
+                controller: TextEditingController(
+                    text: widget.controle!.produtoServicoEmEdicao.obs),
+                onSaved: (String? value) {
+                  widget.controle?.produtoServicoEmEdicao.obs = value;
+                },
+                maxlines: 5,
+                maxlength: 200,
+              )
             ]),
           ),
         )

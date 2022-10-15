@@ -26,10 +26,10 @@ class _FormClienteState extends State<FormCliente> {
   void initState() {
     super.initState();
     setState(() {
-      if (widget.controle!.clienteEmEdicao.nomeFantasia != null) {
-        opEscolhida = 'juridica';
-      } else {
+      if (widget.controle!.clienteEmEdicao.cpf != '') {
         opEscolhida = 'fisica';
+      } else {
+        opEscolhida = 'juridica';
       }
       ;
     });
@@ -88,10 +88,13 @@ class _FormClienteState extends State<FormCliente> {
                         value: "fisica",
                         groupValue: opEscolhida,
                         onChanged: (value) => setState(() {
+                          widget.controle?.clienteEmEdicao.nomeFantasia = '';
+                          widget.controle?.clienteEmEdicao.cnpj = '';
+                          widget.controle?.clienteEmEdicao.ie = '';
                           opEscolhida = 'fisica';
                         }),
                       ),
-                      Text('Pessoa Fisica'),
+                      const Text('Pessoa Fisica'),
                       // ignore: prefer_const_constructors
                       SizedBox(
                         width: 10,
@@ -100,12 +103,14 @@ class _FormClienteState extends State<FormCliente> {
                           value: 'juridica',
                           groupValue: opEscolhida,
                           onChanged: (value) => setState(() {
+                                widget.controle?.clienteEmEdicao.nome = '';
+                                widget.controle?.clienteEmEdicao.cpf = '';
+                                widget.controle?.clienteEmEdicao.numeroRG = '';
                                 opEscolhida = 'juridica';
                               })),
-                      Text('Pessoa Juridica'),
-                      // ignore: prefer_const_constructors
-                      // ignore: prefer_const_constructors
-                      SizedBox(
+                      const Text('Pessoa Juridica'),
+
+                      const SizedBox(
                         width: 10,
                       ),
                       Expanded(
@@ -117,7 +122,9 @@ class _FormClienteState extends State<FormCliente> {
                     // ignore: prefer_const_constructors
                     CustomTextField(
                       label: 'Nome',
-                      initialvalue: widget.controle?.clienteEmEdicao.nome,
+                      readonly: false,
+                      controller: TextEditingController(
+                          text: widget.controle?.clienteEmEdicao.nome),
                       obscureText: false,
                       onSaved: (String? value) {
                         widget.controle?.clienteEmEdicao.nome = value;
@@ -125,14 +132,16 @@ class _FormClienteState extends State<FormCliente> {
                       validator: validar,
                       maxlength: 80,
                     ),
-                    // ignore: prefer_const_constructors
-                    SizedBox(
+
+                    const SizedBox(
                       height: 10,
                     ),
                     CustomTextField(
                       label: 'CPF',
                       obscureText: false,
-                      initialvalue: widget.controle?.clienteEmEdicao.cpf,
+                      readonly: false,
+                      controller: TextEditingController(
+                          text: widget.controle?.clienteEmEdicao.cpf),
                       onSaved: (String? value) {
                         widget.controle?.clienteEmEdicao.cpf = value;
                       },
@@ -145,7 +154,9 @@ class _FormClienteState extends State<FormCliente> {
                     CustomTextField(
                       label: 'Numero RG',
                       obscureText: false,
-                      initialvalue: widget.controle?.clienteEmEdicao.numeroRG,
+                      readonly: false,
+                      controller: TextEditingController(
+                          text: widget.controle?.clienteEmEdicao.numeroRG),
                       onSaved: (String? value) {
                         widget.controle?.clienteEmEdicao.numeroRG = value;
                       },
@@ -158,26 +169,28 @@ class _FormClienteState extends State<FormCliente> {
                     CustomTextField(
                       label: 'Nome Fantasia',
                       obscureText: false,
-                      initialvalue:
-                          widget.controle?.clienteEmEdicao.nomeFantasia,
+                      readonly: false,
+                      controller: TextEditingController(
+                          text: widget.controle?.clienteEmEdicao.nomeFantasia),
                       validator: validar,
                       onSaved: (String? value) {
                         widget.controle?.clienteEmEdicao.nomeFantasia = value;
                       },
                       maxlength: 100,
                     ),
-                    // ignore: prefer_const_constructors
-                    SizedBox(
+                    const SizedBox(
                       height: 10,
                     ),
                     CustomTextField(
                       label: 'CNPJ',
                       obscureText: false,
+                      readonly: false,
                       validator: validar,
                       onSaved: (String? value) {
                         widget.controle?.clienteEmEdicao.cnpj = value;
                       },
-                      initialvalue: widget.controle?.clienteEmEdicao.cnpj,
+                      controller: TextEditingController(
+                          text: widget.controle?.clienteEmEdicao.cnpj),
                       maxlength: 14,
                     ),
                     const SizedBox(
@@ -186,10 +199,12 @@ class _FormClienteState extends State<FormCliente> {
                     CustomTextField(
                       label: 'IE',
                       obscureText: false,
+                      readonly: false,
                       onSaved: (String? value) {
                         widget.controle?.clienteEmEdicao.ie = value;
                       },
-                      initialvalue: widget.controle?.clienteEmEdicao.ie,
+                      controller: TextEditingController(
+                          text: widget.controle?.clienteEmEdicao.ie),
                       maxlength: 10,
                     ),
                     const SizedBox(
@@ -199,10 +214,12 @@ class _FormClienteState extends State<FormCliente> {
                   CustomTextField(
                     label: 'Endereço',
                     obscureText: false,
+                    readonly: false,
                     onSaved: (String? value) {
                       widget.controle?.clienteEmEdicao.endereco = value;
                     },
-                    initialvalue: widget.controle?.clienteEmEdicao.endereco,
+                    controller: TextEditingController(
+                        text: widget.controle?.clienteEmEdicao.endereco),
                     maxlength: 80,
                   ),
                   const SizedBox(
@@ -211,10 +228,12 @@ class _FormClienteState extends State<FormCliente> {
                   CustomTextField(
                     label: 'Bairro',
                     obscureText: false,
+                    readonly: false,
                     onSaved: (String? value) {
                       widget.controle?.clienteEmEdicao.bairro = value;
                     },
-                    initialvalue: widget.controle?.clienteEmEdicao.bairro,
+                    controller: TextEditingController(
+                        text: widget.controle?.clienteEmEdicao.bairro),
                     maxlength: 45,
                   ),
                   const SizedBox(
@@ -223,10 +242,12 @@ class _FormClienteState extends State<FormCliente> {
                   CustomTextField(
                     label: 'Complemento',
                     obscureText: false,
+                    readonly: false,
                     onSaved: (String? value) {
                       widget.controle?.clienteEmEdicao.complemento = value;
                     },
-                    initialvalue: widget.controle?.clienteEmEdicao.complemento,
+                    controller: TextEditingController(
+                        text: widget.controle?.clienteEmEdicao.complemento),
                     maxlength: 45,
                   ),
                   const SizedBox(
@@ -235,10 +256,12 @@ class _FormClienteState extends State<FormCliente> {
                   CustomTextField(
                     label: 'Cidade',
                     obscureText: false,
+                    readonly: false,
                     onSaved: (String? value) {
                       widget.controle?.clienteEmEdicao.cidade = value;
                     },
-                    initialvalue: widget.controle?.clienteEmEdicao.cidade,
+                    controller: TextEditingController(
+                        text: widget.controle?.clienteEmEdicao.cidade),
                     maxlength: 45,
                   ),
                   const SizedBox(
@@ -247,10 +270,12 @@ class _FormClienteState extends State<FormCliente> {
                   CustomTextField(
                     label: 'UF',
                     obscureText: false,
+                    readonly: false,
                     onSaved: (String? value) {
                       widget.controle?.clienteEmEdicao.uf = value;
                     },
-                    initialvalue: widget.controle?.clienteEmEdicao.uf,
+                    controller: TextEditingController(
+                        text: widget.controle?.clienteEmEdicao.uf),
                     maxlength: 15,
                   ),
                   const SizedBox(
@@ -259,11 +284,13 @@ class _FormClienteState extends State<FormCliente> {
                   CustomTextField(
                     label: 'CEP',
                     obscureText: false,
+                    readonly: false,
                     onSaved: (String? value) {
                       widget.controle?.clienteEmEdicao.cep = value;
                     },
                     maxlength: 8,
-                    initialvalue: widget.controle?.clienteEmEdicao.cep,
+                    controller: TextEditingController(
+                        text: widget.controle?.clienteEmEdicao.cep),
                   ),
                   const SizedBox(
                     height: 10,
@@ -271,33 +298,39 @@ class _FormClienteState extends State<FormCliente> {
                   CustomTextField(
                     label: 'Email',
                     obscureText: false,
+                    readonly: false,
                     onSaved: (String? value) {
                       widget.controle?.clienteEmEdicao.email = value;
                     },
-                    initialvalue: widget.controle?.clienteEmEdicao.email,
+                    controller: TextEditingController(
+                        text: widget.controle?.clienteEmEdicao.email),
                     maxlength: 40,
                   ),
-                  SizedBox(height: 10),
+                  const SizedBox(height: 10),
                   CustomTextField(
                     label: 'Skype',
                     obscureText: false,
+                    readonly: false,
                     onSaved: (String? value) {
                       widget.controle?.clienteEmEdicao.skype = value;
                     },
-                    initialvalue: widget.controle?.clienteEmEdicao.skype,
+                    controller: TextEditingController(
+                        text: widget.controle?.clienteEmEdicao.skype),
                     maxlength: 40,
                   ),
-                  SizedBox(
+                  const SizedBox(
                     height: 10,
                   ),
                   CustomTextField(
                     label: 'OBS',
                     obscureText: false,
+                    readonly: false,
                     maxlines: 5,
                     onSaved: (String? value) {
                       widget.controle?.clienteEmEdicao.obs = value;
                     },
-                    initialvalue: widget.controle?.clienteEmEdicao.obs,
+                    controller: TextEditingController(
+                        text: widget.controle?.clienteEmEdicao.obs),
                     maxlength: 300,
                   )
                 ]),

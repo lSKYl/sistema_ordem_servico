@@ -1,5 +1,7 @@
+import 'package:sistema_ordem_servico/modelo/cliente.dart';
+
 import 'conexao_postgres.dart';
-import 'package:sistema_ordem_servico/modelo/pessoa.dart';
+
 import 'package:sistema_ordem_servico/modelo/contato.dart';
 
 class ClienteDAO {
@@ -10,7 +12,7 @@ class ClienteDAO {
         if (cliente.id > 0) {
           await ctx
               .query("""update pessoa set nome = @nome, nomefantasia = @nomefantasia, endereco = @endereco, bairro = @bairro, cidade = @cidade, uf = @uf,
-               cep = @cep, complemento = @complemento, cpf = @cpf, ie = @ie, numerorg = @numerorg, datacadastro = @datacadastro, obs = @obs, tipocli = @tipocli,
+               cep = @cep, complemento = @complemento, cnpj = @cnpj, cpf = @cpf, ie = @ie, numerorg = @numerorg, datacadastro = @datacadastro, obs = @obs, tipocli = @tipocli,
                 tipofor = @tipofor where id = @id""", substitutionValues: {
             "id": cliente.id,
             "nome": cliente.nome,

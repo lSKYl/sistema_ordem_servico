@@ -17,6 +17,8 @@ class _ListMarcaState extends State<ListMarca> {
   final ControleMarca _controle = ControleMarca();
   final TextEditingController _controladorCampoPesquisa =
       TextEditingController();
+  Icon customIcon = const Icon(Icons.search);
+  Widget customSearchBar = const Text('Lista de Marcas');
 
   @override
   void initState() {
@@ -26,104 +28,43 @@ class _ListMarcaState extends State<ListMarca> {
     });
   }
 
-  Widget _listaMarca(Marca marca) {
-    return Card(
-      elevation: 15,
-      child: Container(
-        decoration: BoxDecoration(
-            color: Colors.white, borderRadius: BorderRadius.circular(20)),
-        child: ListTile(
-          leading: CircleAvatar(
-            child: Text(
-              marca.id.toString(),
-              style: const TextStyle(fontWeight: FontWeight.bold),
-            ),
-          ),
-          title: Row(
-            children: [
-              Text(
-                marca.nome!,
-                style: const TextStyle(fontWeight: FontWeight.bold),
-              )
-            ],
-          ),
-          trailing: SizedBox(
-            width: 100,
-            child: Row(children: [
-              IconButton(
-                onPressed: () {
-                  _controle.carregarMarca(marca).then((value) {
-                    _controle.marcaEmEdicao = value;
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => FormMarca(
-                                  controle: _controle,
-                                  onSaved: () {
-                                    setState(() {
-                                      _controle.carregarLista();
-                                    });
-                                  },
-                                )));
-                  });
-                },
-                icon: const Icon(Icons.edit),
-                color: Colors.orange,
-              ),
-              IconButton(
-                onPressed: () {
-                  showDialog(
-                      context: context,
-                      builder: (BuildContext builder) {
-                        return AlertDialog(
-                          shape: const RoundedRectangleBorder(
-                            borderRadius: BorderRadius.all(Radius.circular(20)),
-                          ),
-                          title: const Text('ATENÇÃO'),
-                          content: const Text(
-                            'Deseja realmente excluir esta marca ?',
-                            textAlign: TextAlign.center,
-                          ),
-                          actionsAlignment: MainAxisAlignment.center,
-                          actions: [
-                            TextButton(
-                                onPressed: () {
-                                  _controle.carregarMarca(marca).then(
-                                    (value) {
-                                      _controle.marcaEmEdicao = value;
-                                      _controle
-                                          .excluirMarcaEmEdicao()
-                                          .then((_) {
-                                        Navigator.of(context).pop();
-                                        setState(() {
-                                          _controle.marcas.remove(marca);
-                                        });
-                                      });
-                                    },
-                                  );
-                                },
-                                child: Text('SIM')),
-                            const SizedBox(
-                              width: 20,
-                              height: 20,
-                            ),
-                            TextButton(
-                                onPressed: () {
-                                  Navigator.of(context).pop();
-                                },
-                                child: const Text('NÃO'))
-                          ],
-                        );
-                      });
-                },
-                icon: Icon(Icons.delete),
-                color: Colors.red,
-              )
-            ]),
-          ),
-          // ignore: dead_code
-        ),
+  Widget _listaMarca(Marca marca, int indice) {
+    return CustomListTile(
+      object: marca,
+      index: indice + 1,
+      title: Text(
+        marca.nome!,
+        style: TextStyle(fontWeight: FontWeight.bold),
       ),
+      button1: () {
+        _controle.carregarMarca(marca).then((value) {
+          _controle.marcaEmEdicao = value;
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => FormMarca(
+                        controle: _controle,
+                        onSaved: () {
+                          setState(() {
+                            _controle.carregarLista();
+                          });
+                        },
+                      )));
+        });
+      },
+      button2: () {
+        _controle.carregarMarca(marca).then(
+          (value) {
+            _controle.marcaEmEdicao = value;
+            _controle.excluirMarcaEmEdicao().then((_) {
+              Navigator.of(context).pop();
+              setState(() {
+                _controle.marcas.remove(marca);
+              });
+            });
+          },
+        );
+      },
     );
   }
 
@@ -133,9 +74,48 @@ class _ListMarcaState extends State<ListMarca> {
         backgroundColor: Colors.grey[300],
         appBar: AppBar(
           centerTitle: true,
-          title: Text('Lista de Marcas'),
+          title: customSearchBar,
           actions: [
-            IconButton(onPressed: () {}, icon: Icon(Icons.search)),
+            IconButton(
+                onPressed: () {
+                  // setState(() {
+                  //   if (customIcon.icon == Icons.search) {
+                  //     customIcon = const Icon(Icons.cancel);
+                  //     customSearchBar = ListTile(
+                  //       leading: const Icon(
+                  //         Icons.search,
+                  //         color: Colors.white,
+                  //         size: 28,
+                  //       ),
+                  //       title: TextField(
+                  //         controller: _controladorCampoPesquisa,
+                  //         onChanged: ((value) {
+                  //           _controladorCampoPesquisa.text = value;
+                  //           _controle.pesquisarMarcas(
+                  //               filtroPesquisa: _controladorCampoPesquisa.text);
+                  //           setState(() {});
+                  //         }),
+                  //         decoration: const InputDecoration(
+                  //           hintText: 'Digite a marca que deseja pesquisar...',
+                  //           hintStyle: TextStyle(
+                  //             color: Colors.white,
+                  //             fontSize: 18,
+                  //             fontStyle: FontStyle.italic,
+                  //           ),
+                  //           border: InputBorder.none,
+                  //         ),
+                  //         style: const TextStyle(
+                  //           color: Colors.white,
+                  //         ),
+                  //       ),
+                  //     );
+                  //   } else {
+                  //     customIcon = const Icon(Icons.search);
+                  //     customSearchBar = const Text('Lista de Marcas');
+                  //   }
+                  // });
+                },
+                icon: customIcon),
             IconButton(
                 onPressed: () {
                   _controle.marcaEmEdicao = Marca();
@@ -151,7 +131,7 @@ class _ListMarcaState extends State<ListMarca> {
                                 },
                               )));
                 },
-                icon: Icon(Icons.add))
+                icon: const Icon(Icons.add))
           ],
         ),
         floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
@@ -173,22 +153,43 @@ class _ListMarcaState extends State<ListMarca> {
           icon: const Icon(Icons.add),
           label: const Text('Adicionar'),
         ),
-        body: FutureBuilder(
-            future: _controle.marcasPesquisadas,
-            builder: (BuildContext context, AsyncSnapshot<List> snapshot) {
-              if (snapshot.hasError) {
-                return new Text("${snapshot.error}");
-              }
-              if (snapshot.hasData) {
-                _controle.marcas = snapshot.data as List<Marca>;
+        body: Column(
+          children: [
+            const SizedBox(height: 10),
+            TextField(
+              controller: _controladorCampoPesquisa,
+              onChanged: ((value) {
+                setState(() {
+                  _controle.pesquisarMarcas(filtroPesquisa: value);
+                });
+              }),
+              decoration: const InputDecoration(
+                  prefixIcon: Icon(Icons.search),
+                  border: OutlineInputBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(20)))),
+            ),
+            const SizedBox(height: 10),
+            Expanded(
+              child: FutureBuilder(
+                  future: _controle.marcasPesquisadas,
+                  builder:
+                      (BuildContext context, AsyncSnapshot<List> snapshot) {
+                    if (snapshot.hasError) {
+                      return Text("${snapshot.error}");
+                    }
+                    if (snapshot.hasData) {
+                      _controle.marcas = snapshot.data as List<Marca>;
 
-                return ListView.builder(
-                    itemCount: _controle.marcas.length,
-                    itemBuilder: (BuildContext context, int index) {
-                      return _listaMarca(_controle.marcas[index]);
-                    });
-              }
-              return Center(child: Text('Carregando dados'));
-            }));
+                      return ListView.builder(
+                          itemCount: _controle.marcas.length,
+                          itemBuilder: (BuildContext context, int index) {
+                            return _listaMarca(_controle.marcas[index], index);
+                          });
+                    }
+                    return const Center(child: Text('Carregando dados'));
+                  }),
+            ),
+          ],
+        ));
   }
 }

@@ -4,7 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:sistema_ordem_servico/visao/list_cliente.dart';
 import 'package:sistema_ordem_servico/visao/list_funcionario.dart';
 import 'package:sistema_ordem_servico/visao/list_marca.dart';
+import 'package:sistema_ordem_servico/visao/list_marca_veiculo.dart';
 import 'package:sistema_ordem_servico/visao/list_produtos.dart';
+import 'package:sistema_ordem_servico/visao/list_veiculos.dart';
 import 'package:sistema_ordem_servico/widgets/export_widgets.dart';
 import 'export_visao.dart';
 
@@ -21,14 +23,15 @@ class DashBoard extends StatelessWidget {
       body: Center(
         child: Padding(
           padding: EdgeInsets.all(100),
-          child: Card(
-            elevation: 10,
-            child: Padding(
-              padding: const EdgeInsets.all(15),
-              child: Column(
-                children: [
-                  Expanded(
-                    child: Row(
+          child: SizedBox(
+            child: Card(
+              elevation: 10,
+              child: Padding(
+                padding: const EdgeInsets.all(15),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       // ignore: prefer_const_literals_to_create_immutables
                       children: [
@@ -40,7 +43,7 @@ class DashBoard extends StatelessWidget {
                         Button(
                           formulario: ListCliente(),
                           icon: Icon(Icons.group),
-                          text: 'Pessoas',
+                          text: 'Clientes',
                         ),
                         SizedBox(width: 15),
                         Button(
@@ -49,10 +52,15 @@ class DashBoard extends StatelessWidget {
                             text: 'Produtos e Serviços'),
                         SizedBox(width: 15),
                         Button(
-                            formulario: UserList(),
+                            formulario: ListaVeiculo(),
                             icon: Icon(Icons.directions_car),
                             text: 'Veiculos'),
-                        SizedBox(width: 15),
+                      ],
+                    ),
+                    SizedBox(height: 15),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
                         Button(
                           formulario: ListFuncionario(),
                           icon: Icon(Icons.person),
@@ -71,11 +79,16 @@ class DashBoard extends StatelessWidget {
                         Button(
                             formulario: ListMarca(),
                             icon: Icon(Icons.folder),
-                            text: 'Marcas de Produto')
+                            text: 'Marcas de Produto'),
+                        SizedBox(width: 15),
+                        Button(
+                            formulario: ListMarcaVeiculo(),
+                            icon: Icon(Icons.folder),
+                            text: 'Marcas de Veiculos')
                       ],
-                    ),
-                  ),
-                ],
+                    )
+                  ],
+                ),
               ),
             ),
           ),

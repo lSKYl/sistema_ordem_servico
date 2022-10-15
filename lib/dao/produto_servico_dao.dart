@@ -8,38 +8,47 @@ class ProdutoServicoDAO {
         if (produto.id > 0) {
           await ctx
               .query("""update produtoservico set nome = @nome, referenciaproduto = @referencia, un = @un, obs = @obs,
-        tipopro = @tipopro, tiposer = @tiposer, custo = @custo, marca_id = @marca_id, precoavista = @precoavista, precoprazo = @precoprazo
-        where id = @id
+        tipopro = @tipopro, tiposer = @tiposer, custo = @custo, marca_id = @marca_id, precoavista = @precoavista, precoprazo = @precoprazo,
+        descricaoproduto = @descricaoproduto, descricaoadicionalproduto = @descricaoadicionalproduto, descricaoservico = @descricaoservico,
+        descricaoadicionalservico = @descricaoadicionalservico where id = @id
          """, substitutionValues: {
             "id": produto.id,
             "nome": produto.nome,
             "referencia": produto.referenciaProduto,
             "un": produto.un,
             "obs": produto.obs,
-            "tiporo": produto.tipoProduto,
+            "tipopro": produto.tipoProduto,
             "tiposer": produto.tipoServico,
             "custo": produto.custo,
             "marca_id": produto.marca.id,
             "precoavista": produto.valorVista,
-            "precoprazo": produto.valorPrazo
+            "precoprazo": produto.valorPrazo,
+            "descricaoproduto": produto.descricaoProduto,
+            "descricaoadicionalproduto": produto.descricaoAdicionalProduto,
+            "descricaoservico": produto.descricaoServico,
+            "descricaoadicionalservico": produto.descricaoAdicionalServico
           });
         } else {
           List<Map<String, Map<String, dynamic>>> insertResult = await ctx
               .mappedResultsQuery("""insert into produtoservico (nome, referenciaproduto,
-        un, obs, tipopro, tiposer, datacadastro, custo, marca_id, precoavista, precoprazo) VALUES (@nome, @referencia, @un, @obs, @tipopro, @tiposer,
-        @datacadastro, @custo, @marca, @precoavista, @precoprazo) returning id""",
+        un, obs, tipopro, tiposer, datacadastro, custo, marca_id, precoavista, precoprazo, descricaoproduto, descricaoadicionalproduto, descricaoservico, descricaoadicionalservico) VALUES (@nome, @referencia, @un, @obs, @tipopro, @tiposer,
+        @datacadastro, @custo, @marca, @precoavista, @precoprazo, @descricaoproduto, @descricaoadicionalproduto, @descricaoservico, @descricaoadicionalservico) returning id""",
                   substitutionValues: {
                 "nome": produto.nome,
                 "referencia": produto.referenciaProduto,
                 "un": produto.un,
                 "obs": produto.obs,
                 "tipopro": produto.tipoProduto,
-                "tipopro": produto.tipoServico,
+                "tiposer": produto.tipoServico,
                 "datacadastro": produto.dataCadastro,
                 "custo": produto.custo,
                 "marca": produto.marca.id,
                 "precoavista": produto.valorVista,
-                "precoprazo": produto.valorPrazo
+                "precoprazo": produto.valorPrazo,
+                "descricaoproduto": produto.descricaoProduto,
+                "descricaoadicionalproduto": produto.descricaoAdicionalProduto,
+                "descricaoservico": produto.descricaoServico,
+                "descricaoadicionalservico": produto.descricaoAdicionalServico
               });
         }
       });
@@ -79,9 +88,16 @@ class ProdutoServicoDAO {
         produto.tipoProduto = row["produtoservico"]?["tipopro"];
         produto.tipoServico = row["produtoservico"]?["tiposer"];
         produto.dataCadastro = row["produtoservico"]?["datacadastro"];
-        produto.custo = row["produtoservico"]?["custo"];
-        produto.valorVista = row["produtoservico"]?["precoavista"];
-        produto.valorPrazo = row["produtoservico"]?["precoprazo"];
+        produto.custo = double.parse(row["produtoservico"]?["custo"]);
+        produto.valorVista =
+            double.parse(row["produtoservico"]?["precoavista"]);
+        produto.valorPrazo = double.parse(row["produtoservico"]?["precoprazo"]);
+        produto.descricaoProduto = row["produtoservico"]?["descricaoproduto"];
+        produto.descricaoAdicionalProduto =
+            row["produtoservico"]?["descricaoadicionalproduto"];
+        produto.descricaoServico = row["produtoservico"]?["descricaoservico"];
+        produto.descricaoAdicionalServico =
+            row["produtoservico"]?["descricaoadicionalservico"];
       }
 
       List<Map<String, Map<String, dynamic>>> marca =

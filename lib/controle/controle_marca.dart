@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:sistema_ordem_servico/dao/marca_dao.dart';
 import 'package:sistema_ordem_servico/modelo/marca.dart';
 
@@ -7,6 +8,7 @@ class ControleMarca {
   List<Marca> marcas = [];
   Future<List<Marca>>? marcasPesquisadas;
   Future<List<Marca>>? futureMarcasPesquisas;
+  late Widget widget;
 
   Future<void> pesquisarMarcas({String filtroPesquisa = ""}) async {
     futureMarcasPesquisas = dao.pesquisar(filtro: filtroPesquisa);

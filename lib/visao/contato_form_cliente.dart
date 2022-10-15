@@ -129,6 +129,7 @@ class _ContatoClienteFormState extends State<ContatoClienteForm> {
                       child: Column(
                         children: [
                           CustomTextField(
+                            readonly: false,
                             obscureText: false,
                             label: 'Número',
                             validator: validar,
@@ -142,6 +143,7 @@ class _ContatoClienteFormState extends State<ContatoClienteForm> {
                           ),
                           CustomTextField(
                             label: 'Tipo',
+                            readonly: false,
                             obscureText: false,
                             validator: validar,
                             onSaved: (String? value) {

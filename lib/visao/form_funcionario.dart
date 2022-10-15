@@ -62,57 +62,67 @@ class _FormFuncionarioState extends State<FormFuncionario> {
                       widget.controle!.funcionarioEmEdicao.dataCadastro)),
                 ],
               ),
-              SizedBox(height: 10),
+              const SizedBox(height: 10),
               CustomTextField(
                 label: 'Nome',
                 obscureText: false,
+                readonly: false,
                 validator: (text) {
                   if (text == null || text.isEmpty) {
                     return 'Campo obrigatório';
                   }
                 },
-                initialvalue: widget.controle?.funcionarioEmEdicao.nome,
+                controller: TextEditingController(
+                    text: widget.controle?.funcionarioEmEdicao.nome),
                 onSaved: (String? value) {
                   widget.controle?.funcionarioEmEdicao.nome = value;
                 },
                 maxlength: 80,
               ),
-              SizedBox(height: 10),
+              const SizedBox(height: 10),
               CustomTextField(
                 label: 'Funcão',
                 obscureText: false,
-                initialvalue: widget.controle?.funcionarioEmEdicao.funcao,
+                readonly: false,
+                controller: TextEditingController(
+                    text: widget.controle!.funcionarioEmEdicao.funcao),
                 onSaved: (String? value) {
                   widget.controle?.funcionarioEmEdicao.funcao = value;
                 },
                 maxlength: 40,
               ),
-              SizedBox(height: 10),
+              const SizedBox(height: 10),
               CustomTextField(
                 label: 'Endereço',
                 obscureText: false,
-                initialvalue: widget.controle?.funcionarioEmEdicao.endereco,
+                readonly: false,
                 onSaved: (String? value) {
                   widget.controle?.funcionarioEmEdicao.endereco = value;
                 },
+                controller: TextEditingController(
+                    text: widget.controle?.funcionarioEmEdicao.endereco),
                 maxlength: 80,
               ),
-              SizedBox(height: 10),
+              const SizedBox(height: 10),
               CustomTextField(
                 label: 'Bairro',
                 obscureText: false,
-                initialvalue: widget.controle?.funcionarioEmEdicao.bairro,
+                readonly: false,
                 onSaved: (String? value) {
                   widget.controle?.funcionarioEmEdicao.bairro = value;
                 },
+                controller: TextEditingController(
+                    text: widget.controle?.funcionarioEmEdicao.bairro),
                 maxlength: 45,
               ),
-              SizedBox(height: 10),
+              const SizedBox(height: 10),
               CustomTextField(
                 label: 'Obs',
                 obscureText: false,
+                readonly: false,
                 maxlines: 5,
-                initialvalue: widget.controle?.funcionarioEmEdicao.obs,
+                controller: TextEditingController(
+                    text: widget.controle?.funcionarioEmEdicao.obs),
                 onSaved: (String? value) {
                   widget.controle?.funcionarioEmEdicao.obs = value;
                 },

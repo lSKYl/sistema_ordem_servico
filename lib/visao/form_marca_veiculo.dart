@@ -1,24 +1,27 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:sistema_ordem_servico/controle/controle_marca.dart';
+import 'package:flutter/src/widgets/container.dart';
+import 'package:flutter/src/widgets/framework.dart';
+import 'package:sistema_ordem_servico/controle/controle_marca_veiculo.dart';
 import 'package:sistema_ordem_servico/widgets/export_widgets.dart';
 
-class FormMarca extends StatefulWidget {
-  ControleMarca? controle;
-  Function()? onSaved;
-  FormMarca({Key? key, this.controle, this.onSaved}) : super(key: key);
+class FormMarcaVeiculo extends StatefulWidget {
+  ControleMarcaVeiculo? controleMarcaVeiculo;
+  Function? onSaved;
+  FormMarcaVeiculo({super.key, this.controleMarcaVeiculo, this.onSaved});
 
   @override
-  State<FormMarca> createState() => _FormMarcaState();
+  State<FormMarcaVeiculo> createState() => _FormMarcaVeiculoState();
 }
 
-class _FormMarcaState extends State<FormMarca> {
+class _FormMarcaVeiculoState extends State<FormMarcaVeiculo> {
   final _chaveForm = GlobalKey<FormState>();
 
   Future<void> salvar(BuildContext context) async {
     if (_chaveForm.currentState != null &&
         _chaveForm.currentState!.validate()) {
       _chaveForm.currentState!.save();
-      widget.controle?.salvarMarcaEmEdicao().then((_) {
+      widget.controleMarcaVeiculo?.salvarMarcaEmEdicao().then((_) {
         if (widget.onSaved != null) widget.onSaved!();
         Navigator.of(context).pop();
       });
@@ -30,7 +33,7 @@ class _FormMarcaState extends State<FormMarca> {
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
-        title: const Text('Cadastro de Marcas'),
+        title: const Text('Cadastro de Marcas de Veiculos'),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       floatingActionButton: FloatingActionButton.extended(
@@ -38,30 +41,28 @@ class _FormMarcaState extends State<FormMarca> {
           salvar(context);
         },
         label: const Text('Salvar'),
-        icon: Icon(Icons.add),
+        icon: const Icon(Icons.add),
       ),
       body: Form(
         key: _chaveForm,
         child: Padding(
-          padding: const EdgeInsets.all(8.0),
+          padding: const EdgeInsets.all(8),
           child: Column(children: [
             CustomTextField(
               label: 'Nome',
               obscureText: false,
               readonly: false,
               controller: TextEditingController(
-                  text: widget.controle?.marcaEmEdicao.nome),
-              onSaved: (String? value) {
-                widget.controle?.marcaEmEdicao.nome = value;
-              },
+                  text: widget.controleMarcaVeiculo?.marcaEmEdicao.nome),
               validator: (text) {
                 if (text == null || text.isEmpty) {
-                  return 'Este campo é obirgatório';
+                  return 'Campo obrigatório';
                 }
-
-                return null;
               },
               maxlength: 45,
+              onSaved: (String? value) {
+                widget.controleMarcaVeiculo?.marcaEmEdicao.nome = value;
+              },
             )
           ]),
         ),

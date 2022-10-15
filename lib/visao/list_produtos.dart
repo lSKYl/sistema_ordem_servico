@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:sistema_ordem_servico/controle/controle_produto.dart';
 import 'package:sistema_ordem_servico/modelo/produto_servico.dart';
 import 'package:sistema_ordem_servico/visao/form_produto.dart';
+import 'package:sistema_ordem_servico/widgets/export_widgets.dart';
 
 class ListProduto extends StatefulWidget {
   ListProduto({Key? key}) : super(key: key);
@@ -24,108 +25,52 @@ class _ListProdutoState extends State<ListProduto> {
   }
 
   Widget _listaProduto(ProdutoServico produto, int indice) {
-    return Card(
-        elevation: 15,
-        child: Container(
-          decoration: BoxDecoration(
-              color: Colors.white, borderRadius: BorderRadius.circular(20)),
-          child: ListTile(
-            leading: CircleAvatar(
-              child: Text(
-                '${indice + 1}',
-                style: const TextStyle(fontWeight: FontWeight.bold),
+    return CustomListTile(
+      object: produto,
+      index: indice + 1,
+      title: Row(
+        children: [
+          Text(
+            produto.nome!,
+            style: const TextStyle(fontWeight: FontWeight.bold),
+          )
+        ],
+      ),
+      subtitle: produto.tipoProduto == true
+          ? const Text("Produto")
+          : const Text("Serviço"),
+      button1: () {
+        _controle.carregarProduto(produto).then((value) {
+          _controle.produtoServicoEmEdicao = value;
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => FormProduto(
+                controle: _controle,
+                onSaved: (() {
+                  setState(() {
+                    _controle.carregarLista();
+                  });
+                }),
               ),
             ),
-            title: Row(
-              children: [
-                Text(
-                  produto.nome!,
-                  style: const TextStyle(fontWeight: FontWeight.bold),
-                )
-              ],
-            ),
-            subtitle: produto.tipoProduto == true
-                ? const Text("Produto")
-                : const Text("Serviço"),
-            trailing: SizedBox(
-              width: 100,
-              child: Row(
-                children: [
-                  IconButton(
-                    onPressed: () {
-                      _controle.carregarProduto(produto).then((value) {
-                        _controle.produtoServicoEmEdicao = value;
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => FormProduto(
-                              controle: _controle,
-                              onSaved: (() {
-                                setState(() {
-                                  _controle.carregarLista();
-                                });
-                              }),
-                            ),
-                          ),
-                        );
-                      });
-                    },
-                    icon: const Icon(
-                      Icons.edit,
-                      color: Colors.orange,
-                    ),
-                  ),
-                  IconButton(
-                    onPressed: () {
-                      showDialog(
-                          context: context,
-                          builder: (BuildContext builder) {
-                            return AlertDialog(
-                              shape: const RoundedRectangleBorder(
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(20)),
-                              ),
-                              title: const Text('ATENÇÃO'),
-                              content: const Text(
-                                'Deseja realmente excluir esta marca ?',
-                                textAlign: TextAlign.center,
-                              ),
-                              actionsAlignment: MainAxisAlignment.center,
-                              actions: [
-                                TextButton(
-                                  onPressed: () {
-                                    _controle.carregarProduto(produto).then(
-                                      (value) {
-                                        _controle.produtoServicoEmEdicao =
-                                            value;
-                                        _controle.excluirProduto().then((_) {
-                                          Navigator.of(context).pop();
-                                          setState(() {
-                                            _controle.produtos.remove(produto);
-                                          });
-                                        });
-                                      },
-                                    );
-                                  },
-                                  child: const Text('SIM'),
-                                ),
-                                TextButton(
-                                    onPressed: () {
-                                      Navigator.of(context).pop();
-                                    },
-                                    child: const Text('NÃO'))
-                              ],
-                            );
-                          });
-                    },
-                    icon: const Icon(Icons.delete),
-                    color: Colors.red,
-                  )
-                ],
-              ),
-            ),
-          ),
-        ));
+          );
+        });
+      },
+      button2: () {
+        _controle.carregarProduto(produto).then(
+          (value) {
+            _controle.produtoServicoEmEdicao = value;
+            _controle.excluirProduto().then((_) {
+              Navigator.of(context).pop();
+              setState(() {
+                _controle.produtos.remove(produto);
+              });
+            });
+          },
+        );
+      },
+    );
   }
 
   Widget build(BuildContext context) {
@@ -133,7 +78,7 @@ class _ListProdutoState extends State<ListProduto> {
       backgroundColor: Colors.grey[300],
       appBar: AppBar(
         centerTitle: true,
-        title: Text('Lista de Clientes'),
+        title: const Text('Lista de Produtos e Serviços'),
         actions: [
           IconButton(onPressed: () {}, icon: Icon(Icons.search)),
           IconButton(

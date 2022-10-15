@@ -7,6 +7,7 @@ class CustomTextField extends StatelessWidget {
       {Key? key,
       required this.label,
       this.initialvalue,
+      this.controller,
       this.icon,
       this.hint,
       this.suffix,
@@ -19,9 +20,11 @@ class CustomTextField extends StatelessWidget {
       this.prefix,
       this.onTap,
       this.keyboardType,
-      this.input})
+      this.input,
+      required this.readonly})
       : super(key: key);
   final String label;
+  final TextEditingController? controller;
   final Icon? icon;
   final String? hint;
   final Widget? suffix;
@@ -36,10 +39,13 @@ class CustomTextField extends StatelessWidget {
   final TextInputType? keyboardType;
   final List<TextInputFormatter>? input;
   final Widget? prefix;
+  final bool readonly;
 
   @override
   Widget build(BuildContext context) {
     return TextFormField(
+      readOnly: readonly,
+      controller: controller,
       onTap: onTap,
       obscureText: obscureText,
       autovalidateMode: AutovalidateMode.onUserInteraction,
@@ -47,10 +53,12 @@ class CustomTextField extends StatelessWidget {
       onSaved: onSaved,
       onChanged: onChanged,
       maxLines: maxlines,
+      maxLength: maxlength,
       initialValue: initialvalue,
       keyboardType: keyboardType,
       inputFormatters: input,
       decoration: InputDecoration(
+          counterText: "",
           labelText: label,
           hintText: hint,
           prefix: prefix,
