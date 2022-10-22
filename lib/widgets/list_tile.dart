@@ -9,7 +9,8 @@ class CustomListTile extends StatelessWidget {
       this.title,
       this.subtitle,
       this.button1,
-      this.button2});
+      this.button2,
+      this.color});
   final Object object;
   final Widget? title;
   final int? index;
@@ -18,20 +19,23 @@ class CustomListTile extends StatelessWidget {
   final void Function()? button1;
   final void Function()? button2;
   final void Function()? onTap;
+  final Color? color;
 
   @override
   Widget build(BuildContext context) {
     return Card(
+      color: color,
       elevation: 15,
       child: Container(
         decoration: BoxDecoration(
-            color: Colors.white, borderRadius: BorderRadius.circular(20)),
+            color: color, borderRadius: BorderRadius.circular(20)),
         child: ListTile(
           leading: CircleAvatar(
+              backgroundColor: Colors.blueGrey[900],
               child: Text(
-            "$index",
-            style: const TextStyle(fontWeight: FontWeight.bold),
-          )),
+                "$index",
+                style: const TextStyle(fontWeight: FontWeight.bold),
+              )),
           title: title,
           subtitle: subtitle,
           trailing: SizedBox(

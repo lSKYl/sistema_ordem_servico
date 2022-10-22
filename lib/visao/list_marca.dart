@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:sistema_ordem_servico/controle/controle_marca.dart';
-import 'package:sistema_ordem_servico/dao/marca_dao.dart';
+
 import 'package:sistema_ordem_servico/modelo/marca.dart';
-import 'package:sistema_ordem_servico/visao/export_visao.dart';
+
 import 'package:sistema_ordem_servico/visao/form_marca.dart';
 import 'package:sistema_ordem_servico/widgets/export_widgets.dart';
+import 'package:sistema_ordem_servico/widgets/search_field_appBar.dart';
 
 class ListMarca extends StatefulWidget {
-  ListMarca({Key? key}) : super(key: key);
+  const ListMarca({Key? key}) : super(key: key);
 
   @override
   State<ListMarca> createState() => _ListMarcaState();
@@ -24,7 +25,7 @@ class _ListMarcaState extends State<ListMarca> {
   void initState() {
     super.initState();
     setState(() {
-      _controle.carregarLista();
+      _controle.pesquisarMarcas();
     });
   }
 
@@ -33,7 +34,7 @@ class _ListMarcaState extends State<ListMarca> {
       object: marca,
       index: indice + 1,
       title: Text(
-        marca.nome!,
+        marca.nome,
         style: TextStyle(fontWeight: FontWeight.bold),
       ),
       button1: () {
@@ -46,7 +47,7 @@ class _ListMarcaState extends State<ListMarca> {
                         controle: _controle,
                         onSaved: () {
                           setState(() {
-                            _controle.carregarLista();
+                            _controle.pesquisarMarcas();
                           });
                         },
                       )));
@@ -78,42 +79,25 @@ class _ListMarcaState extends State<ListMarca> {
           actions: [
             IconButton(
                 onPressed: () {
-                  // setState(() {
-                  //   if (customIcon.icon == Icons.search) {
-                  //     customIcon = const Icon(Icons.cancel);
-                  //     customSearchBar = ListTile(
-                  //       leading: const Icon(
-                  //         Icons.search,
-                  //         color: Colors.white,
-                  //         size: 28,
-                  //       ),
-                  //       title: TextField(
-                  //         controller: _controladorCampoPesquisa,
-                  //         onChanged: ((value) {
-                  //           _controladorCampoPesquisa.text = value;
-                  //           _controle.pesquisarMarcas(
-                  //               filtroPesquisa: _controladorCampoPesquisa.text);
-                  //           setState(() {});
-                  //         }),
-                  //         decoration: const InputDecoration(
-                  //           hintText: 'Digite a marca que deseja pesquisar...',
-                  //           hintStyle: TextStyle(
-                  //             color: Colors.white,
-                  //             fontSize: 18,
-                  //             fontStyle: FontStyle.italic,
-                  //           ),
-                  //           border: InputBorder.none,
-                  //         ),
-                  //         style: const TextStyle(
-                  //           color: Colors.white,
-                  //         ),
-                  //       ),
-                  //     );
-                  //   } else {
-                  //     customIcon = const Icon(Icons.search);
-                  //     customSearchBar = const Text('Lista de Marcas');
-                  //   }
-                  // });
+                  setState(() {
+                    if (customIcon.icon == Icons.search) {
+                      customIcon = const Icon(Icons.cancel);
+                      customSearchBar = SearchField(
+                        controller: _controladorCampoPesquisa,
+                        onChanged: (text) {
+                          setState(() {
+                            _controle.pesquisarMarcas(
+                                filtroPesquisa: _controladorCampoPesquisa.text
+                                    .toLowerCase());
+                          });
+                        },
+                        hint: 'Digite a marca que deseja pesquisar...',
+                      );
+                    } else {
+                      customIcon = const Icon(Icons.search);
+                      customSearchBar = const Text('Lista de Marcas');
+                    }
+                  });
                 },
                 icon: customIcon),
             IconButton(
@@ -126,7 +110,7 @@ class _ListMarcaState extends State<ListMarca> {
                                 controle: _controle,
                                 onSaved: () {
                                   setState(() {
-                                    _controle.carregarLista();
+                                    _controle.pesquisarMarcas();
                                   });
                                 },
                               )));
@@ -145,7 +129,7 @@ class _ListMarcaState extends State<ListMarca> {
                           controle: _controle,
                           onSaved: () {
                             setState(() {
-                              _controle.carregarLista();
+                              _controle.pesquisarMarcas();
                             });
                           },
                         )));
@@ -153,43 +137,22 @@ class _ListMarcaState extends State<ListMarca> {
           icon: const Icon(Icons.add),
           label: const Text('Adicionar'),
         ),
-        body: Column(
-          children: [
-            const SizedBox(height: 10),
-            TextField(
-              controller: _controladorCampoPesquisa,
-              onChanged: ((value) {
-                setState(() {
-                  _controle.pesquisarMarcas(filtroPesquisa: value);
-                });
-              }),
-              decoration: const InputDecoration(
-                  prefixIcon: Icon(Icons.search),
-                  border: OutlineInputBorder(
-                      borderRadius: BorderRadius.all(Radius.circular(20)))),
-            ),
-            const SizedBox(height: 10),
-            Expanded(
-              child: FutureBuilder(
-                  future: _controle.marcasPesquisadas,
-                  builder:
-                      (BuildContext context, AsyncSnapshot<List> snapshot) {
-                    if (snapshot.hasError) {
-                      return Text("${snapshot.error}");
-                    }
-                    if (snapshot.hasData) {
-                      _controle.marcas = snapshot.data as List<Marca>;
+        body: FutureBuilder(
+            future: _controle.marcasPesquisadas,
+            builder: (BuildContext context, AsyncSnapshot<List> snapshot) {
+              if (snapshot.hasError) {
+                return Text("${snapshot.error}");
+              }
+              if (snapshot.hasData) {
+                _controle.marcas = snapshot.data as List<Marca>;
 
-                      return ListView.builder(
-                          itemCount: _controle.marcas.length,
-                          itemBuilder: (BuildContext context, int index) {
-                            return _listaMarca(_controle.marcas[index], index);
-                          });
-                    }
-                    return const Center(child: Text('Carregando dados'));
-                  }),
-            ),
-          ],
-        ));
+                return ListView.builder(
+                    itemCount: _controle.marcas.length,
+                    itemBuilder: (BuildContext context, int index) {
+                      return _listaMarca(_controle.marcas[index], index);
+                    });
+              }
+              return const Center(child: Text('Carregando dados'));
+            }));
   }
 }

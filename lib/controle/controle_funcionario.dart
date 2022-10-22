@@ -20,7 +20,7 @@ class ControleFuncionario {
     dao.excluir(funcionarioEmEdicao);
   }
 
-  Future<void> carregarLista() async {
-    funcionariosPesquisados = dao.carregar();
+  Future<void> pesquisarFuncionario({String filtro = ""}) async {
+    funcionariosPesquisados = dao.pesquisarFuncionario(filtro: filtro);
   }
 }

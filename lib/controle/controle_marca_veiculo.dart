@@ -6,10 +6,9 @@ class ControleMarcaVeiculo {
   MarcaVeiculo marcaEmEdicao = MarcaVeiculo();
   List<MarcaVeiculo> marcas = [];
   Future<List<MarcaVeiculo>>? marcasPesquisadas;
-  Future<List<MarcaVeiculo>>? futureMarcasPesquisadas;
 
   Future<void> pesquisarMarcas({String filtropesquisa = ""}) async {
-    futureMarcasPesquisadas = dao.pesquisar(filtro: filtropesquisa);
+    marcasPesquisadas = dao.pesquisar(filtro: filtropesquisa);
   }
 
   Future<MarcaVeiculo> carregarMarca(MarcaVeiculo marca) async {
@@ -18,10 +17,6 @@ class ControleMarcaVeiculo {
 
   Future<void> salvarMarcaEmEdicao() async {
     await dao.gravar(marcaEmEdicao);
-  }
-
-  Future<void> carregarList() async {
-    marcasPesquisadas = dao.carregar();
   }
 
   Future<void> excluirMarcaEmEdicao() async {

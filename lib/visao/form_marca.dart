@@ -43,7 +43,15 @@ class _FormMarcaState extends State<FormMarca> {
       body: Form(
         key: _chaveForm,
         child: Padding(
-          padding: const EdgeInsets.all(8.0),
+          padding: EdgeInsets.only(
+              top: 10,
+              bottom: 10,
+              left: MediaQuery.of(context).size.width > 1000
+                  ? (MediaQuery.of(context).size.width - 1000) / 2
+                  : 10,
+              right: MediaQuery.of(context).size.width > 1000
+                  ? (MediaQuery.of(context).size.width - 1000) / 2
+                  : 10),
           child: Column(children: [
             CustomTextField(
               label: 'Nome',

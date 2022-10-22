@@ -1,4 +1,4 @@
-class Marca {
+class FormaPagamento {
   int _id = 0;
   String? _nome;
   bool _registroAtivo = true;
@@ -13,14 +13,4 @@ class Marca {
   get registroAtivo => _registroAtivo;
 
   set registroAtivo(value) => _registroAtivo = value;
-
-  @override
-  String toString() {
-    return 'ID: $id NOME: $nome REGISTRO: $registroAtivo';
-  }
-
-  @override
-  bool operator ==(other) {
-    return other is Marca && other.id == id;
-  }
 }

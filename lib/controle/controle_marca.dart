@@ -7,11 +7,9 @@ class ControleMarca {
   Marca marcaEmEdicao = Marca();
   List<Marca> marcas = [];
   Future<List<Marca>>? marcasPesquisadas;
-  Future<List<Marca>>? futureMarcasPesquisas;
-  late Widget widget;
 
   Future<void> pesquisarMarcas({String filtroPesquisa = ""}) async {
-    futureMarcasPesquisas = dao.pesquisar(filtro: filtroPesquisa);
+    marcasPesquisadas = dao.pesquisar(filtro: filtroPesquisa);
   }
 
   Future<Marca> carregarMarca(Marca marca) async {
@@ -24,10 +22,5 @@ class ControleMarca {
 
   Future<void> excluirMarcaEmEdicao() async {
     dao.excluir(marcaEmEdicao);
-  }
-
-  Future<void> carregarLista() async {
-    //await Future.delayed(Duration(seconds: 5));
-    marcasPesquisadas = dao.carregar();
   }
 }

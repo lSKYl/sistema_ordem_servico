@@ -10,7 +10,7 @@ class ControlePessoa {
   Future<List<Cliente>>? futureClientesPesquisados;
 
   Future<void> pesquisarClientes({String filtroPesquisa = ""}) async {
-    futureClientesPesquisados = dao.pesquisar(filtro: filtroPesquisa);
+    clientesPesquisados = dao.pesquisarCliente(filtro: filtroPesquisa);
   }
 
   Future<Cliente> carregarCliente(Cliente cliente) async {
@@ -23,9 +23,5 @@ class ControlePessoa {
 
   Future<void> excluirCliente() async {
     dao.excluir(clienteEmEdicao);
-  }
-
-  Future<void> carregarLista() async {
-    clientesPesquisados = dao.carregar();
   }
 }

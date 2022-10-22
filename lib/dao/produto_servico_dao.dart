@@ -75,9 +75,11 @@ class ProdutoServicoDAO {
     ProdutoServico produto = ProdutoServico();
     try {
       List<Map<String, Map<String, dynamic>>> results =
-          await (await getConexaoPostgre())
-              .mappedResultsQuery("""SELECT * from produtoservico 
-    where id = @id order by lower(nome)""", substitutionValues: {"id": id});
+          await (await getConexaoPostgre()).mappedResultsQuery(
+              """select produto.*, marca.nome, marca.id from produtoservico as produto
+inner join marca as marca ON marca.id = produto.marca_id
+where produto.id = @id order by lower(produto.nome)""",
+              substitutionValues: {"id": id});
 
       for (final row in results) {
         produto.id = row["produtoservico"]?["id"];
@@ -98,13 +100,7 @@ class ProdutoServicoDAO {
         produto.descricaoServico = row["produtoservico"]?["descricaoservico"];
         produto.descricaoAdicionalServico =
             row["produtoservico"]?["descricaoadicionalservico"];
-      }
 
-      List<Map<String, Map<String, dynamic>>> marca =
-          await (await getConexaoPostgre()).mappedResultsQuery("""
-SELECT * from marca where id = @id order by lower(nome)""",
-              substitutionValues: {"id": marcaId});
-      for (final row in marca) {
         produto.marca.id = row["marca"]?["id"];
         produto.marca.nome = row["marca"]?["nome"];
       }
@@ -115,12 +111,15 @@ SELECT * from marca where id = @id order by lower(nome)""",
     return produto;
   }
 
-  Future<List<ProdutoServico>> carregar() async {
+  Future<List<ProdutoServico>> pesquisar({String filtro = ""}) async {
     List<ProdutoServico> produtos = [];
     try {
       List<Map<String, Map<String, dynamic>>> results =
           await (await getConexaoPostgre()).mappedResultsQuery(
-              """SELECT id, nome, tipopro, tiposer, marca_id from produtoservico where registroativo = true order by id""");
+              """select produto.*, marca.nome, marca.id from produtoservico as produto
+inner join marca as marca ON marca.id = produto.marca_id
+where produto.registroativo = true and lower(produto.nome) like @filtro order by lower(produto.nome)""",
+              substitutionValues: {"filtro": "%$filtro%"});
 
       for (final row in results) {
         ProdutoServico produto = ProdutoServico();

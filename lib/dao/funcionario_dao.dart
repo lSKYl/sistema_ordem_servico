@@ -1,9 +1,6 @@
-import 'dart:convert';
-
 import 'conexao_postgres.dart';
 import 'package:sistema_ordem_servico/modelo/funcionario.dart';
 import 'package:sistema_ordem_servico/modelo/contato.dart';
-import 'package:crypt/crypt.dart';
 
 class FuncionarioDAO {
   Future<void> gravar(Funcionario funcionario) async {
@@ -99,12 +96,13 @@ class FuncionarioDAO {
     return funcionario;
   }
 
-  Future<List<Funcionario>> carregar() async {
+  Future<List<Funcionario>> pesquisarFuncionario({String filtro = ""}) async {
     List<Funcionario> funcionarios = [];
     try {
       List<Map<String, Map<String, dynamic>>> results =
           await (await getConexaoPostgre()).mappedResultsQuery(
-              """SELECT id, nome, funcao from funcionario where registroativo = true order by id""");
+              """SELECT id, nome, funcao from funcionario where registroativo = true and lower(nome) like @filtro order by lower(nome)""",
+              substitutionValues: {"filtro": "%$filtro%"});
 
       for (final row in results) {
         Funcionario funcionario = Funcionario();

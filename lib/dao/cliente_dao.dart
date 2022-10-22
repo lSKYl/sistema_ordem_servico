@@ -83,7 +83,7 @@ class ClienteDAO {
       (await getConexaoPostgre()).transaction((ctx) async {
         await ctx.query(
             "update pessoa set registroativo = false where id = @id",
-            substitutionValues: {"id": cliente.id, "registroativo": false});
+            substitutionValues: {"id": cliente.id});
       });
     } catch (e) {
       print('error');
@@ -130,36 +130,13 @@ class ClienteDAO {
     return cliente;
   }
 
-  Future<List<Cliente>> pesquisar({String filtro = ""}) async {
+  Future<List<Cliente>> pesquisarCliente({String filtro = ""}) async {
     List<Cliente> clientes = [];
     try {
       List<Map<String, Map<String, dynamic>>> results =
           await (await getConexaoPostgre()).mappedResultsQuery(
-              """SELECT id, nome, nomefantasia, cpf, cnpj from pessoa where registroativo = true and lower(nome) and lower(nomefantasia) like @filtro order by id""",
-              substitutionValues: {"filtro": '$filtro'});
-
-      for (final row in results) {
-        Cliente cliente = Cliente();
-        cliente.id = row["pessoa"]?["id"];
-        cliente.nome = row["pessoa"]?["nome"];
-        cliente.nomeFantasia = row["pessoa"]?["nomefantasia"];
-        cliente.cpf = row["pessoa"]?["cpf"];
-        cliente.cnpj = row["pessoa"]?["cnpj"];
-        clientes.add(cliente);
-      }
-    } catch (e) {
-      print('error');
-      print(e.toString());
-    }
-    return clientes;
-  }
-
-  Future<List<Cliente>> carregar() async {
-    List<Cliente> clientes = [];
-    try {
-      List<Map<String, Map<String, dynamic>>> results =
-          await (await getConexaoPostgre()).mappedResultsQuery(
-              """SELECT id, nome, nomefantasia, cpf, cnpj from pessoa where registroativo = true order by id""");
+              """SELECT id, nome, nomefantasia, cpf, cnpj from pessoa where registroativo = true and lower(nome) like @filtro or lower(nomefantasia) like @filtro order by lower(nome)""",
+              substitutionValues: {"filtro": "%$filtro%"});
 
       for (final row in results) {
         Cliente cliente = Cliente();

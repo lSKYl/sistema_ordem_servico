@@ -1,8 +1,6 @@
 import 'package:sistema_ordem_servico/modelo/veiculo.dart';
 
 import 'conexao_postgres.dart';
-import 'package:sistema_ordem_servico/modelo/marcaveiculo.dart';
-import 'package:sistema_ordem_servico/modelo/cliente.dart';
 
 class VeiculoDAO {
   Future<void> gravar(Veiculo veiculo) async {
@@ -61,7 +59,10 @@ class VeiculoDAO {
     try {
       List<Map<String, Map<String, dynamic>>> results =
           await (await getConexaoPostgre()).mappedResultsQuery(
-              """SELECT * from carro where id = @id order by lower(modelo)""",
+              """select veiculo.*, cliente.nome, cliente.nomefantasia, cliente.cpf, cliente.cnpj, cliente.id, marca.id, marca.nome from carro as veiculo
+inner join pessoa as cliente on cliente.id = veiculo.pessoa_id 
+inner join marcaveiculo as marca ON marca.id = veiculo.marcaveiculo_id
+where veiculo.id = @id""",
               substitutionValues: {"id": id});
 
       for (final row in results) {
@@ -70,25 +71,12 @@ class VeiculoDAO {
         veiculo.placa = row["carro"]?["placa"];
         veiculo.tipodeVeiculo = row["carro"]?["tipo"];
         veiculo.obs = row["carro"]?["obs"];
-      }
+        veiculo.cor = row["carro"]?["cor"];
 
-      List<Map<String, Map<String, dynamic>>> cliente =
-          await (await getConexaoPostgre()).mappedResultsQuery(
-              """SELECT id, nome, nomefantasia from pessoa where id = @id order by lower(nome)""",
-              substitutionValues: {"id": clienteId});
-
-      for (final row in cliente) {
         veiculo.cliente.id = row["pessoa"]?["id"];
         veiculo.cliente.nome = row["pessoa"]?["nome"];
         veiculo.cliente.nomeFantasia = row["pessoa"]?["nomefantasia"];
-      }
 
-      List<Map<String, Map<String, dynamic>>> marca =
-          await (await getConexaoPostgre()).mappedResultsQuery(
-              """SELECT id, nome from marcaveiculo where id = @id order by lower(nome)""",
-              substitutionValues: {"id": marcaId});
-
-      for (final row in marca) {
         veiculo.marca.id = row["marcaveiculo"]?["id"];
         veiculo.marca.nome = row["marcaveiculo"]?["nome"];
       }
@@ -99,12 +87,16 @@ class VeiculoDAO {
     return veiculo;
   }
 
-  Future<List<Veiculo>> carregar() async {
+  Future<List<Veiculo>> pesquisarVeiculo({String filtro = ""}) async {
     List<Veiculo> veiculos = [];
     try {
       List<Map<String, Map<String, dynamic>>> results =
           await (await getConexaoPostgre()).mappedResultsQuery(
-              """SELECT id, modelo, placa, tipo, marcaveiculo_id, pessoa_id from carro where registroativo = true order by id""");
+              """select veiculo.id, veiculo.modelo, veiculo.placa, marca.nome, cliente.nome, cliente.nomefantasia, cliente.cpf, cliente.cnpj, pessoa_id, marcaveiculo_id from carro as veiculo
+inner join pessoa as cliente on cliente.id = veiculo.pessoa_id 
+inner join marcaveiculo as marca ON marca.id = veiculo.marcaveiculo_id
+where cliente.registroativo = true and lower(veiculo.modelo) like @filtro""",
+              substitutionValues: {"filtro": "%$filtro%"});
 
       for (final row in results) {
         Veiculo veiculo = Veiculo();
@@ -113,24 +105,12 @@ class VeiculoDAO {
         veiculo.placa = row["carro"]?["placa"];
         veiculo.cliente.id = row["carro"]?["pessoa_id"];
         veiculo.marca.id = row["carro"]?["marcaveiculo_id"];
+        veiculo.cliente.nome = row["pessoa"]?["nome"];
+        veiculo.cliente.nomeFantasia = row["pessoa"]?["nomefantasia"];
+        veiculo.cliente.cpf = row["pessoa"]?["cpf"];
+        veiculo.cliente.cnpj = row["pessoa"]?["cnpj"];
+        veiculo.marca.nome = row["marcaveiculo"]?["nome"];
 
-        List<Map<String, Map<String, dynamic>>> marca =
-            await (await getConexaoPostgre()).mappedResultsQuery(
-                "SELECT * from marcaveiculo where id = @id",
-                substitutionValues: {"id": veiculo.marca.id});
-        for (final row2 in marca) {
-          veiculo.marca.nome = row2["marcaveiculo"]?["nome"];
-        }
-        List<Map<String, Map<String, dynamic>>> cliente =
-            await (await getConexaoPostgre()).mappedResultsQuery(
-                "SELECT id, nome, nomefantasia, cpf, cnpj from pessoa where id = @id",
-                substitutionValues: {"id": veiculo.cliente.id});
-        for (final row3 in cliente) {
-          veiculo.cliente.nome = row3["pessoa"]?["nome"];
-          veiculo.cliente.cpf = row3["pessoa"]?["cpf"];
-          veiculo.cliente.nomeFantasia = row3["pessoa"]?["nomefantasia"];
-          veiculo.cliente.cnpj = row3["pessoa"]?["cnpj"];
-        }
         veiculos.add(veiculo);
       }
     } catch (e) {

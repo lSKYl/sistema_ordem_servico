@@ -2,9 +2,11 @@
 
 import 'package:flutter/material.dart';
 import 'package:sistema_ordem_servico/visao/list_cliente.dart';
+import 'package:sistema_ordem_servico/visao/list_formpag.dart';
 import 'package:sistema_ordem_servico/visao/list_funcionario.dart';
 import 'package:sistema_ordem_servico/visao/list_marca.dart';
 import 'package:sistema_ordem_servico/visao/list_marca_veiculo.dart';
+import 'package:sistema_ordem_servico/visao/list_ordemservico.dart';
 import 'package:sistema_ordem_servico/visao/list_produtos.dart';
 import 'package:sistema_ordem_servico/visao/list_veiculos.dart';
 import 'package:sistema_ordem_servico/widgets/export_widgets.dart';
@@ -36,7 +38,7 @@ class DashBoard extends StatelessWidget {
                       // ignore: prefer_const_literals_to_create_immutables
                       children: [
                         Button(
-                            formulario: UserList(),
+                            formulario: ListOrdemServico(),
                             icon: Icon(Icons.assignment),
                             text: 'Ordens de Serviço'),
                         SizedBox(width: 15),
@@ -50,11 +52,6 @@ class DashBoard extends StatelessWidget {
                             formulario: ListProduto(),
                             icon: Icon(Icons.shopping_basket),
                             text: 'Produtos e Serviços'),
-                        SizedBox(width: 15),
-                        Button(
-                            formulario: ListaVeiculo(),
-                            icon: Icon(Icons.directions_car),
-                            text: 'Veiculos'),
                       ],
                     ),
                     SizedBox(height: 15),
@@ -80,6 +77,21 @@ class DashBoard extends StatelessWidget {
                             formulario: ListMarca(),
                             icon: Icon(Icons.folder),
                             text: 'Marcas de Produto'),
+                      ],
+                    ),
+                    SizedBox(height: 15),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Button(
+                            icon: Icon(Icons.money),
+                            text: 'Formas de Pagamento',
+                            formulario: ListFormPag()),
+                        SizedBox(width: 15),
+                        Button(
+                            formulario: ListaVeiculo(),
+                            icon: Icon(Icons.directions_car),
+                            text: 'Veiculos'),
                         SizedBox(width: 15),
                         Button(
                             formulario: ListMarcaVeiculo(),

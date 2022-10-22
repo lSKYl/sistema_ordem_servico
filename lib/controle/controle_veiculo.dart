@@ -20,7 +20,7 @@ class ControleVeiculo {
     dao.excluir(veiculoEmEdicao);
   }
 
-  Future<void> carregarListaVeiculo() async {
-    veiculosLista = dao.carregar();
+  Future<void> pesquisarVeiculo({String filtro = ""}) async {
+    veiculosLista = dao.pesquisarVeiculo(filtro: filtro);
   }
 }

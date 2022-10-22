@@ -6,7 +6,6 @@ class ControleProdutoServico {
   ProdutoServico produtoServicoEmEdicao = ProdutoServico();
   List<ProdutoServico> produtos = [];
   Future<List<ProdutoServico>>? produtosLista;
-  Future<List<ProdutoServico>>? produtosPesquisados;
 
   Future<ProdutoServico> carregarProduto(ProdutoServico produto) async {
     return dao.carregaObjetoPorId(produto.id, produto.marca.id);
@@ -20,7 +19,7 @@ class ControleProdutoServico {
     dao.excluir(produtoServicoEmEdicao);
   }
 
-  Future<void> carregarLista() async {
-    produtosLista = dao.carregar();
+  Future<void> pesquisarProduto({String filtroPesquisa = ""}) async {
+    produtosLista = dao.pesquisar(filtro: filtroPesquisa);
   }
 }

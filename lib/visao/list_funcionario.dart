@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:sistema_ordem_servico/visao/export_visao.dart';
+
 import 'package:sistema_ordem_servico/visao/funcionario_dados.dart';
 import 'package:sistema_ordem_servico/widgets/export_widgets.dart';
-import 'form_funcionario.dart';
+import 'package:sistema_ordem_servico/widgets/search_field_appBar.dart';
+
 import 'package:sistema_ordem_servico/modelo/funcionario.dart';
 import 'package:sistema_ordem_servico/controle/controle_funcionario.dart';
 
@@ -15,12 +16,16 @@ class ListFuncionario extends StatefulWidget {
 
 class _ListFuncionarioState extends State<ListFuncionario> {
   final ControleFuncionario _controle = ControleFuncionario();
+  final TextEditingController _controladorCampoPesquisa =
+      TextEditingController();
+  Icon customIcon = const Icon(Icons.search);
+  Widget customSearchBar = const Text('Lista de Funcionarios');
 
   @override
   void initState() {
     super.initState();
     setState(() {
-      _controle.carregarLista();
+      _controle.pesquisarFuncionario();
     });
   }
 
@@ -46,7 +51,7 @@ class _ListFuncionarioState extends State<ListFuncionario> {
                         controle: _controle,
                         onSaved: () {
                           setState(() {
-                            _controle.carregarLista();
+                            _controle.pesquisarFuncionario();
                           });
                         },
                       )));
@@ -80,7 +85,7 @@ class _ListFuncionarioState extends State<ListFuncionario> {
                         controle: _controle,
                         onSaved: () {
                           setState(() {
-                            _controle.carregarLista();
+                            _controle.pesquisarFuncionario();
                           });
                         },
                       )));
@@ -91,8 +96,27 @@ class _ListFuncionarioState extends State<ListFuncionario> {
       backgroundColor: Colors.grey[300],
       appBar: AppBar(
         centerTitle: true,
-        title: Text('Lista de Funcionarios'),
+        title: customSearchBar,
         actions: [
+          IconButton(
+              onPressed: () {
+                setState(() {
+                  if (customIcon.icon == Icons.search) {
+                    customSearchBar = SearchField(
+                      controller: _controladorCampoPesquisa,
+                      onChanged: ((text) {
+                        setState(() {
+                          _controle.pesquisarFuncionario(
+                              filtro:
+                                  _controladorCampoPesquisa.text.toLowerCase());
+                        });
+                      }),
+                      hint: 'Digite o funcionário que deseja pesquisar...',
+                    );
+                  }
+                });
+              },
+              icon: customIcon),
           IconButton(
               onPressed: () {
                 _controle.funcionarioEmEdicao = Funcionario();
@@ -103,19 +127,19 @@ class _ListFuncionarioState extends State<ListFuncionario> {
                               controle: _controle,
                               onSaved: () {
                                 setState(() {
-                                  _controle.carregarLista();
+                                  _controle.pesquisarFuncionario();
                                 });
                               },
                             )));
               },
-              icon: Icon(Icons.add))
+              icon: const Icon(Icons.add))
         ],
       ),
       body: FutureBuilder(
         future: _controle.funcionariosPesquisados,
         builder: (BuildContext context, AsyncSnapshot<List> snapshot) {
           if (snapshot.hasError) {
-            return new Text("${snapshot.error}");
+            return Text("${snapshot.error}");
           }
           if (snapshot.hasData) {
             _controle.funcionarios = snapshot.data as List<Funcionario>;

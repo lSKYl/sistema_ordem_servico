@@ -3,6 +3,7 @@ import 'package:sistema_ordem_servico/controle/controle_produto.dart';
 import 'package:sistema_ordem_servico/modelo/produto_servico.dart';
 import 'package:sistema_ordem_servico/visao/form_produto.dart';
 import 'package:sistema_ordem_servico/widgets/export_widgets.dart';
+import 'package:sistema_ordem_servico/widgets/search_field_appBar.dart';
 
 class ListProduto extends StatefulWidget {
   ListProduto({Key? key}) : super(key: key);
@@ -15,17 +16,20 @@ class _ListProdutoState extends State<ListProduto> {
   final ControleProdutoServico _controle = ControleProdutoServico();
   final TextEditingController _controladorCampoPesquisa =
       TextEditingController();
+  Icon customIcon = const Icon(Icons.search);
+  Widget customSearchBar = const Text('Lista de Produtos e Serviços');
 
   @override
   void initState() {
     super.initState();
     setState(() {
-      _controle.carregarLista();
+      _controle.pesquisarProduto();
     });
   }
 
   Widget _listaProduto(ProdutoServico produto, int indice) {
     return CustomListTile(
+      color: produto.registroAtivo == true ? Colors.white : Colors.red,
       object: produto,
       index: indice + 1,
       title: Row(
@@ -49,7 +53,7 @@ class _ListProdutoState extends State<ListProduto> {
                 controle: _controle,
                 onSaved: (() {
                   setState(() {
-                    _controle.carregarLista();
+                    _controle.pesquisarProduto();
                   });
                 }),
               ),
@@ -78,9 +82,33 @@ class _ListProdutoState extends State<ListProduto> {
       backgroundColor: Colors.grey[300],
       appBar: AppBar(
         centerTitle: true,
-        title: const Text('Lista de Produtos e Serviços'),
+        title: customSearchBar,
         actions: [
-          IconButton(onPressed: () {}, icon: Icon(Icons.search)),
+          IconButton(
+              onPressed: () {
+                setState(() {
+                  if (customIcon.icon == Icons.search) {
+                    customIcon = const Icon(Icons.cancel);
+                    customSearchBar = SearchField(
+                      controller: _controladorCampoPesquisa,
+                      onChanged: (text) {
+                        setState(() {
+                          _controle.pesquisarProduto(
+                              filtroPesquisa:
+                                  _controladorCampoPesquisa.text.toLowerCase());
+                        });
+                      },
+                      hint:
+                          'Digite o produto ou serviço que deseja pesquuisar...',
+                    );
+                  } else {
+                    customIcon = const Icon(Icons.search);
+                    customSearchBar =
+                        const Text('Lista de Produtos e Serviços');
+                  }
+                });
+              },
+              icon: customIcon),
           IconButton(
               onPressed: () {
                 _controle.produtoServicoEmEdicao = ProdutoServico();
@@ -91,12 +119,12 @@ class _ListProdutoState extends State<ListProduto> {
                               controle: _controle,
                               onSaved: () {
                                 setState(() {
-                                  _controle.carregarLista();
+                                  _controle.pesquisarProduto();
                                 });
                               },
                             )));
               },
-              icon: Icon(Icons.add))
+              icon: const Icon(Icons.add))
         ],
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
@@ -110,7 +138,7 @@ class _ListProdutoState extends State<ListProduto> {
                         controle: _controle,
                         onSaved: () {
                           setState(() {
-                            _controle.carregarLista();
+                            _controle.pesquisarProduto();
                           });
                         },
                       )));
@@ -122,7 +150,7 @@ class _ListProdutoState extends State<ListProduto> {
         future: _controle.produtosLista,
         builder: (BuildContext context, AsyncSnapshot<List> snapshot) {
           if (snapshot.hasError) {
-            return new Text("${snapshot.error}");
+            return Text("${snapshot.error}");
           }
           if (snapshot.hasData) {
             _controle.produtos = snapshot.data as List<ProdutoServico>;
@@ -134,7 +162,7 @@ class _ListProdutoState extends State<ListProduto> {
               },
             );
           }
-          return Center(
+          return const Center(
             child: Text('Carregando dados'),
           );
         },

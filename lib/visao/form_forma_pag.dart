@@ -1,31 +1,35 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/container.dart';
-import 'package:flutter/src/widgets/framework.dart';
-import 'package:sistema_ordem_servico/controle/controle_marca_veiculo.dart';
+import 'package:sistema_ordem_servico/controle/controle_formapagamento.dart';
 import 'package:sistema_ordem_servico/widgets/export_widgets.dart';
 
-class FormMarcaVeiculo extends StatefulWidget {
-  ControleMarcaVeiculo? controleMarcaVeiculo;
-  Function? onSaved;
-  FormMarcaVeiculo({super.key, this.controleMarcaVeiculo, this.onSaved});
+class FormFormaPag extends StatefulWidget {
+  ControleFormaPagamento? controle;
+  Function()? onSaved;
+  FormFormaPag({super.key, this.controle, this.onSaved});
 
   @override
-  State<FormMarcaVeiculo> createState() => _FormMarcaVeiculoState();
+  State<FormFormaPag> createState() => _FormFormaPagState();
 }
 
-class _FormMarcaVeiculoState extends State<FormMarcaVeiculo> {
+class _FormFormaPagState extends State<FormFormaPag> {
   final _chaveForm = GlobalKey<FormState>();
 
   Future<void> salvar(BuildContext context) async {
     if (_chaveForm.currentState != null &&
         _chaveForm.currentState!.validate()) {
       _chaveForm.currentState!.save();
-      widget.controleMarcaVeiculo?.salvarMarcaEmEdicao().then((_) {
+      widget.controle?.salvarFormaEmEdicao().then((_) {
         if (widget.onSaved != null) widget.onSaved!();
         Navigator.of(context).pop();
       });
     }
+  }
+
+  String? validar(text) {
+    if (text == null || text.isEmpty) {
+      return 'Campo obrigatório';
+    }
+    return null;
   }
 
   @override
@@ -33,7 +37,7 @@ class _FormMarcaVeiculoState extends State<FormMarcaVeiculo> {
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
-        title: const Text('Cadastro de Marcas de Veiculos'),
+        title: const Text('Cadastro de Formas de Pagamento'),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       floatingActionButton: FloatingActionButton.extended(
@@ -55,24 +59,20 @@ class _FormMarcaVeiculoState extends State<FormMarcaVeiculo> {
               right: MediaQuery.of(context).size.width > 1000
                   ? (MediaQuery.of(context).size.width - 1000) / 2
                   : 10),
-          child: Column(children: [
-            CustomTextField(
-              label: 'Nome',
-              obscureText: false,
-              readonly: false,
-              controller: TextEditingController(
-                  text: widget.controleMarcaVeiculo?.marcaEmEdicao.nome),
-              validator: (text) {
-                if (text == null || text.isEmpty) {
-                  return 'Campo obrigatório';
-                }
-              },
-              maxlength: 45,
-              onSaved: (String? value) {
-                widget.controleMarcaVeiculo?.marcaEmEdicao.nome = value;
-              },
-            )
-          ]),
+          child: Column(
+            children: [
+              CustomTextField(
+                label: 'Nome',
+                obscureText: false,
+                readonly: false,
+                validator: validar,
+                onSaved: (String? value) {
+                  widget.controle?.formaEmEdicao.nome = value;
+                },
+                maxlength: 45,
+              )
+            ],
+          ),
         ),
       ),
     );

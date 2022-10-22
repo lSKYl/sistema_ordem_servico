@@ -97,6 +97,9 @@ create table ordemServico (
 	situacaoAtual varchar(45),
 	pessoa_id integer references pessoa(id),
 	funcionario_id integer references funcionario(id),
+	problemaConstado varchar(500),
+	servicoExecutado varchar(500),
+	obsComplementares varchar(150),
 	registroAtivo boolean default true,
 	tipoC boolean default false,
 	tipoOS boolean default true
@@ -109,9 +112,6 @@ create table ordemServicoProdutos (
 	valorProdutos numeric(14,2),
 	valorMaoObra numeric(14,2),
 	desconto numeric(14,2),
-	problemaConstado varchar(500),
-	servicoExecutado varchar(500),
-	obsComplementares varchar(150),
 	ordemServico_id integer references ordemServico(id)
 );
 

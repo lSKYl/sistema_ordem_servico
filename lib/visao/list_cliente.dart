@@ -3,6 +3,7 @@ import 'package:sistema_ordem_servico/modelo/cliente.dart';
 import 'package:sistema_ordem_servico/visao/cliente_dados.dart';
 import 'package:sistema_ordem_servico/controle/controle_cliente.dart';
 import 'package:sistema_ordem_servico/widgets/export_widgets.dart';
+import 'package:sistema_ordem_servico/widgets/search_field_appBar.dart';
 
 class ListCliente extends StatefulWidget {
   ListCliente({Key? key}) : super(key: key);
@@ -15,12 +16,14 @@ class _ListClienteState extends State<ListCliente> {
   final ControlePessoa _controle = ControlePessoa();
   final TextEditingController _controladorCampoPesquisa =
       TextEditingController();
+  Icon customIcon = const Icon(Icons.search);
+  Widget customSearchBar = const Text('Lista de clientes');
 
   @override
   void initState() {
     super.initState();
     setState(() {
-      _controle.carregarLista();
+      _controle.pesquisarClientes();
     });
   }
 
@@ -58,7 +61,7 @@ class _ListClienteState extends State<ListCliente> {
                         controle: _controle,
                         onSaved: () {
                           setState(() {
-                            _controle.carregarLista();
+                            _controle.pesquisarClientes();
                           });
                         },
                       )));
@@ -83,9 +86,31 @@ class _ListClienteState extends State<ListCliente> {
       backgroundColor: Colors.grey[300],
       appBar: AppBar(
         centerTitle: true,
-        title: Text('Lista de Clientes'),
+        title: customSearchBar,
         actions: [
-          IconButton(onPressed: () {}, icon: const Icon(Icons.search)),
+          IconButton(
+              onPressed: () {
+                setState(() {
+                  if (customIcon.icon == Icons.search) {
+                    customIcon = const Icon(Icons.cancel);
+                    customSearchBar = SearchField(
+                      controller: _controladorCampoPesquisa,
+                      onChanged: ((text) {
+                        setState(() {
+                          _controle.pesquisarClientes(
+                              filtroPesquisa:
+                                  _controladorCampoPesquisa.text.toLowerCase());
+                        });
+                      }),
+                      hint: 'Digite o cliente que deseja pesquisar...',
+                    );
+                  } else {
+                    customIcon = const Icon(Icons.search);
+                    customSearchBar = const Text('Lista de Clientes');
+                  }
+                });
+              },
+              icon: customIcon),
           IconButton(
               onPressed: () {
                 _controle.clienteEmEdicao = Cliente();
@@ -96,12 +121,12 @@ class _ListClienteState extends State<ListCliente> {
                               controle: _controle,
                               onSaved: () {
                                 setState(() {
-                                  _controle.carregarLista();
+                                  _controle.pesquisarClientes();
                                 });
                               },
                             )));
               },
-              icon: Icon(Icons.add))
+              icon: const Icon(Icons.add))
         ],
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
@@ -115,7 +140,7 @@ class _ListClienteState extends State<ListCliente> {
                         controle: _controle,
                         onSaved: () {
                           setState(() {
-                            _controle.carregarLista();
+                            _controle.pesquisarClientes();
                           });
                         },
                       )));

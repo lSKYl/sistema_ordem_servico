@@ -4,6 +4,7 @@ import 'package:sistema_ordem_servico/controle/controle_marca_veiculo.dart';
 import 'package:sistema_ordem_servico/modelo/marcaveiculo.dart';
 import 'package:sistema_ordem_servico/visao/form_marca_veiculo.dart';
 import 'package:sistema_ordem_servico/widgets/export_widgets.dart';
+import 'package:sistema_ordem_servico/widgets/search_field_appBar.dart';
 
 class ListMarcaVeiculo extends StatefulWidget {
   const ListMarcaVeiculo({super.key});
@@ -16,12 +17,14 @@ class _ListMarcaVeiculoState extends State<ListMarcaVeiculo> {
   final ControleMarcaVeiculo _controle = ControleMarcaVeiculo();
   final TextEditingController _controladorCampoPesquisa =
       TextEditingController();
+  Icon customIcon = const Icon(Icons.search);
+  Widget customSearchBar = const Text('Lista de Marcas de Veiculos');
 
   @override
   void initState() {
     super.initState();
     setState(() {
-      _controle.carregarList();
+      _controle.pesquisarMarcas();
     });
   }
 
@@ -43,7 +46,7 @@ class _ListMarcaVeiculoState extends State<ListMarcaVeiculo> {
                         controleMarcaVeiculo: _controle,
                         onSaved: () {
                           setState(() {
-                            _controle.carregarList();
+                            _controle.pesquisarMarcas();
                           });
                         },
                       ))));
@@ -69,9 +72,31 @@ class _ListMarcaVeiculoState extends State<ListMarcaVeiculo> {
       backgroundColor: Colors.grey[300],
       appBar: AppBar(
         centerTitle: true,
-        title: const Text('Lista de Marcas de Veiculos'),
+        title: customSearchBar,
         actions: [
-          IconButton(onPressed: () {}, icon: const Icon(Icons.search)),
+          IconButton(
+              onPressed: () {
+                setState(() {
+                  if (customIcon.icon == Icons.search) {
+                    customIcon = const Icon(Icons.cancel);
+                    customSearchBar = SearchField(
+                      controller: _controladorCampoPesquisa,
+                      onChanged: ((text) {
+                        setState(() {
+                          _controle.pesquisarMarcas(
+                              filtropesquisa:
+                                  _controladorCampoPesquisa.text.toLowerCase());
+                        });
+                      }),
+                      hint: 'Digite a marca que deseja pesquisar...',
+                    );
+                  } else {
+                    customIcon = const Icon(Icons.search);
+                    customSearchBar = const Text('Lista de Marcas de Veiculos');
+                  }
+                });
+              },
+              icon: customIcon),
           IconButton(
               onPressed: () {
                 _controle.marcaEmEdicao = MarcaVeiculo();
@@ -82,7 +107,7 @@ class _ListMarcaVeiculoState extends State<ListMarcaVeiculo> {
                               controleMarcaVeiculo: _controle,
                               onSaved: () {
                                 setState(() {
-                                  _controle.carregarList();
+                                  _controle.pesquisarMarcas();
                                 });
                               },
                             ))));
@@ -101,7 +126,7 @@ class _ListMarcaVeiculoState extends State<ListMarcaVeiculo> {
                         controleMarcaVeiculo: _controle,
                         onSaved: () {
                           setState(() {
-                            _controle.carregarList();
+                            _controle.pesquisarMarcas();
                           });
                         },
                       ))));

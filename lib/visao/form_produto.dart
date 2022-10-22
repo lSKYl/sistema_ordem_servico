@@ -1,4 +1,3 @@
-import 'package:date_format/date_format.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'package:sistema_ordem_servico/controle/controle_produto.dart';
@@ -6,6 +5,7 @@ import 'package:sistema_ordem_servico/modelo/marca.dart';
 import 'package:sistema_ordem_servico/widgets/export_widgets.dart';
 import 'package:sistema_ordem_servico/controle/controle_marca.dart';
 import 'package:flutter/material.dart';
+import 'package:sistema_ordem_servico/widgets/search_field.dart';
 
 class FormProduto extends StatefulWidget {
   ControleProdutoServico? controle;
@@ -24,6 +24,7 @@ class _FormProdutoState extends State<FormProduto> {
   final ControleMarca _controleMarca = ControleMarca();
   late TextEditingController marcaController = TextEditingController(
       text: widget.controle!.produtoServicoEmEdicao.marca.nome);
+  TextEditingController _controladorCampoPesquisa = TextEditingController();
 
   String get _currency =>
       NumberFormat.compactSimpleCurrency(locale: _locale).currencySymbol;
@@ -40,7 +41,7 @@ class _FormProdutoState extends State<FormProduto> {
     }
   }
 
-  Widget listaMarcas() {
+  Widget _listaMarcas() {
     return SizedBox(
       width: 500,
       height: 500,
@@ -210,15 +211,31 @@ class _FormProdutoState extends State<FormProduto> {
                   readonly: true,
                   onTap: (() {
                     setState(() {
-                      _controleMarca.carregarLista();
+                      _controleMarca.pesquisarMarcas();
                     });
                     showDialog(
                         context: context,
                         builder: (BuildContext builder) {
-                          return AlertDialog(
-                            title: const Text("Escolha uma marca"),
-                            content: listaMarcas(),
-                          );
+                          return StatefulBuilder(builder: (context, setState) {
+                            return AlertDialog(
+                                title: SearchFieldDialog(
+                                  controller: _controladorCampoPesquisa,
+                                  onChanged: (text) {
+                                    setState(
+                                      () {
+                                        _controleMarca.pesquisarMarcas(
+                                            filtroPesquisa:
+                                                _controladorCampoPesquisa.text
+                                                    .toLowerCase());
+                                        setState;
+                                      },
+                                    );
+                                  },
+                                  hint:
+                                      "Digite a marca que deseja pesquisar...",
+                                ),
+                                content: _listaMarcas());
+                          });
                         });
                   }),
                 ),

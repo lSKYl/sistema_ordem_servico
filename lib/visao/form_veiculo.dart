@@ -7,6 +7,7 @@ import 'package:sistema_ordem_servico/modelo/cliente.dart';
 import 'package:sistema_ordem_servico/controle/controle_marca_veiculo.dart';
 import 'package:sistema_ordem_servico/controle/controle_cliente.dart';
 import 'package:sistema_ordem_servico/widgets/export_widgets.dart';
+import 'package:sistema_ordem_servico/widgets/search_field.dart';
 
 class FormVeiculo extends StatefulWidget {
   ControleVeiculo? controle;
@@ -27,6 +28,8 @@ class _FormVeiculoState extends State<FormVeiculo> {
       text: widget.controle!.veiculoEmEdicao.cliente.nome == ""
           ? widget.controle!.veiculoEmEdicao.cliente.nomeFantasia
           : widget.controle!.veiculoEmEdicao.cliente.nome);
+  TextEditingController _controladorPesquisaCliente = TextEditingController();
+  TextEditingController _controladorPesquisaMarca = TextEditingController();
 
   Future<void> salvar(BuildContext context) async {
     if (_chaveForm.currentState != null &&
@@ -220,15 +223,31 @@ class _FormVeiculoState extends State<FormVeiculo> {
                   controller: marcaController,
                   onTap: () {
                     setState(() {
-                      _controleMarca.carregarList();
+                      _controleMarca.pesquisarMarcas();
                     });
                     showDialog(
                         context: context,
                         builder: (BuildContext builder) {
-                          return AlertDialog(
-                            title: const Text("Escolha a marca do veiculo"),
-                            content: listaMarcas(),
-                          );
+                          return StatefulBuilder(builder: ((context, setState) {
+                            return AlertDialog(
+                              title: SearchFieldDialog(
+                                controller: _controladorPesquisaMarca,
+                                onChanged: (text) {
+                                  setState(
+                                    () {
+                                      _controleMarca.pesquisarMarcas(
+                                          filtropesquisa:
+                                              _controladorPesquisaMarca.text
+                                                  .toLowerCase());
+                                    },
+                                  );
+                                },
+                                hint:
+                                    'Digite a marca do veiculo que deseja pesquisar...',
+                              ),
+                              content: listaMarcas(),
+                            );
+                          }));
                         });
                   },
                 ),
@@ -243,15 +262,29 @@ class _FormVeiculoState extends State<FormVeiculo> {
                   validator: validar,
                   onTap: () {
                     setState(() {
-                      _controlePessoa.carregarLista();
+                      _controlePessoa.pesquisarClientes();
                     });
                     showDialog(
                         context: context,
                         builder: (BuildContext builder) {
-                          return AlertDialog(
-                            title: const Text("Escolha o cliente"),
-                            content: listaClientes(),
-                          );
+                          return StatefulBuilder(builder: ((context, setState) {
+                            return AlertDialog(
+                              title: SearchFieldDialog(
+                                controller: _controladorPesquisaCliente,
+                                onChanged: (text) {
+                                  setState((() {
+                                    _controlePessoa.pesquisarClientes(
+                                        filtroPesquisa:
+                                            _controladorPesquisaCliente.text
+                                                .toLowerCase());
+                                  }));
+                                },
+                                hint:
+                                    "Digite o cliente que deseja pesquisar...",
+                              ),
+                              content: listaClientes(),
+                            );
+                          }));
                         });
                   },
                 ),

@@ -18,7 +18,7 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'Sistema de gerenciamento de Ordens de Serviço',
       routes: {
-        AppRoutes.HOME: (context) => DashBoard(),
+        AppRoutes.HOME: (context) => const DashBoard(),
       },
     );
   }
