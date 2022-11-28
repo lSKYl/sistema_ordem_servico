@@ -10,12 +10,12 @@ class CustomListTile extends StatelessWidget {
       this.subtitle,
       this.button1,
       this.button2,
-      this.color});
+      this.color, this.textoExcluir});
   final Object object;
   final Widget? title;
   final int? index;
   final Widget? subtitle;
-
+  final String? textoExcluir;
   final void Function()? button1;
   final void Function()? button2;
   final void Function()? onTap;
@@ -59,8 +59,8 @@ class CustomListTile extends StatelessWidget {
                                   BorderRadius.all(Radius.circular(20)),
                             ),
                             title: const Text('ATENÇÃO'),
-                            content: const Text(
-                              'Deseja realmente excluir este cliente ?',
+                            content: Text(
+                              textoExcluir!,
                               textAlign: TextAlign.center,
                             ),
                             actionsAlignment: MainAxisAlignment.center,

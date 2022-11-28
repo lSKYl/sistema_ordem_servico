@@ -29,6 +29,7 @@ class _ListaVeiculoState extends State<ListaVeiculo> {
   Widget _listaVeiculo(Veiculo veiculo, int indice) {
     return CustomListTile(
       object: veiculo,
+      textoExcluir: "Deseja realmente excluir esse veiculo ?",
       index: indice + 1,
       title: Text('${veiculo.modelo} ${veiculo.marca.nome} ${veiculo.placa}'),
       subtitle: Row(children: [

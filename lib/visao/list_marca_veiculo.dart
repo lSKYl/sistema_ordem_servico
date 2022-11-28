@@ -31,6 +31,7 @@ class _ListMarcaVeiculoState extends State<ListMarcaVeiculo> {
   Widget _listaMarca(MarcaVeiculo marca, int indice) {
     return CustomListTile(
       object: marca,
+      textoExcluir: "Deseja realmente excluir está marca ?",
       index: indice + 1,
       title: Text(
         marca.nome!,

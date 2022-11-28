@@ -1,20 +1,33 @@
 import 'package:sistema_ordem_servico/modelo/contato.dart';
 
-class Pessoa {
+abstract class Pessoa {
   int _id = 0;
-  String? _nome;
-  String? _cpf;
-  String? _nomeFantasia;
-  String? _endereco;
-  String? _bairro;
+  String? _nome = "";
+  String? _cpf = "";
+  String? _nomeFantasia = "";
+  String? _endereco = "";
+  String? _bairro = "";
+  String? _cidade = "";
+  String? _uf = "";
+  String? _cep = "";
+  get uf => this._uf;
+
+  set uf(value) => this._uf = value;
+
+  get cep => this._cep;
+
+  set cep(value) => this._cep = value;
+  String? get cidade => this._cidade;
+
+  set cidade(String? value) => this._cidade = value;
   DateTime _dataCadastro = DateTime.now();
-  String? _obs;
-  bool _tipoF = false;
+  String? _obs = "";
+
   bool _registroAtivo = true;
   List<Contato> _contatos = [];
-  int get id => this._id;
+  get id => this._id;
 
-  set id(int value) => this._id = value;
+  set id(value) => this._id = value;
 
   get nome => this._nome;
 
@@ -44,15 +57,11 @@ class Pessoa {
 
   set obs(value) => this._obs = value;
 
-  get tipoF => this._tipoF;
-
-  set tipoF(value) => this._tipoF = value;
-
   get registroAtivo => this._registroAtivo;
 
   set registroAtivo(value) => this._registroAtivo = value;
 
-  get contatos => this._contatos;
+  List<Contato> get contatos => this._contatos;
 
-  set contatos(value) => this._contatos = value;
+  set contatos(List<Contato> value) => this._contatos = value;
 }

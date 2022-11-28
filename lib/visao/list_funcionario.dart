@@ -32,6 +32,7 @@ class _ListFuncionarioState extends State<ListFuncionario> {
   Widget _listaFuncionario(Funcionario funcionario, int indice) {
     return CustomListTile(
       object: funcionario,
+      textoExcluir: "Deseja realmente excluir este funcionário ?",
       index: indice + 1,
       title: Text(
         funcionario.nome!,

@@ -60,9 +60,9 @@ class _FormProdutoState extends State<FormProduto> {
                 Marca marca = _controleMarca.marcas[index];
                 return SizedBox(
                   child: ListTileDialog(
-                    object: _controleMarca.marcas[index],
-                    nome: marca.nome!,
-                    subtitulo: "",
+                    object: marca,
+                    nome: Text(marca.nome),
+                    subtitulo: const Text(""),
                     indice: index + 1,
                     onTap: () {
                       _controleMarca.carregarMarca(marca).then((value) {

@@ -20,7 +20,7 @@ class ProdutoServicoDAO {
             "tipopro": produto.tipoProduto,
             "tiposer": produto.tipoServico,
             "custo": produto.custo,
-            "marca_id": produto.marca.id,
+            "marca_id": produto.marca.id == 0 ? null : produto.marca.id,
             "precoavista": produto.valorVista,
             "precoprazo": produto.valorPrazo,
             "descricaoproduto": produto.descricaoProduto,
@@ -42,7 +42,7 @@ class ProdutoServicoDAO {
                 "tiposer": produto.tipoServico,
                 "datacadastro": produto.dataCadastro,
                 "custo": produto.custo,
-                "marca": produto.marca.id,
+                "marca": produto.marca.id == 0 ? null : produto.marca.id,
                 "precoavista": produto.valorVista,
                 "precoprazo": produto.valorPrazo,
                 "descricaoproduto": produto.descricaoProduto,
@@ -77,7 +77,7 @@ class ProdutoServicoDAO {
       List<Map<String, Map<String, dynamic>>> results =
           await (await getConexaoPostgre()).mappedResultsQuery(
               """select produto.*, marca.nome, marca.id from produtoservico as produto
-inner join marca as marca ON marca.id = produto.marca_id
+left join marca as marca ON marca.id = produto.marca_id
 where produto.id = @id order by lower(produto.nome)""",
               substitutionValues: {"id": id});
 
@@ -90,7 +90,9 @@ where produto.id = @id order by lower(produto.nome)""",
         produto.tipoProduto = row["produtoservico"]?["tipopro"];
         produto.tipoServico = row["produtoservico"]?["tiposer"];
         produto.dataCadastro = row["produtoservico"]?["datacadastro"];
-        produto.custo = double.parse(row["produtoservico"]?["custo"]);
+        produto.custo = row["produtoservico"]?["custo"] == null
+            ? 0
+            : double.parse(row["produtoservico"]?["custo"]);
         produto.valorVista =
             double.parse(row["produtoservico"]?["precoavista"]);
         produto.valorPrazo = double.parse(row["produtoservico"]?["precoprazo"]);
@@ -101,8 +103,13 @@ where produto.id = @id order by lower(produto.nome)""",
         produto.descricaoAdicionalServico =
             row["produtoservico"]?["descricaoadicionalservico"];
 
-        produto.marca.id = row["marca"]?["id"];
-        produto.marca.nome = row["marca"]?["nome"];
+        produto.marca.id =
+            row["marca"]?["id"] == null ? 0 : row["marca"]?["id"];
+        if (produto.marca.id != 0) {
+          produto.marca.nome = row["marca"]?["nome"];
+        } else {
+          produto.marca.nome = "";
+        }
       }
     } catch (e) {
       print("Error");
@@ -116,8 +123,8 @@ where produto.id = @id order by lower(produto.nome)""",
     try {
       List<Map<String, Map<String, dynamic>>> results =
           await (await getConexaoPostgre()).mappedResultsQuery(
-              """select produto.*, marca.nome, marca.id from produtoservico as produto
-inner join marca as marca ON marca.id = produto.marca_id
+              """select produto.id, produto.nome, produto.precoavista, produto.precoprazo, produto.custo, produto.tipopro, produto.tiposer, marca.nome, marca.id from produtoservico as produto
+left join marca as marca ON marca.id = produto.marca_id or marca.id = null
 where produto.registroativo = true and lower(produto.nome) like @filtro order by lower(produto.nome)""",
               substitutionValues: {"filtro": "%$filtro%"});
 
@@ -125,9 +132,22 @@ where produto.registroativo = true and lower(produto.nome) like @filtro order by
         ProdutoServico produto = ProdutoServico();
         produto.id = row["produtoservico"]?["id"];
         produto.nome = row["produtoservico"]?["nome"];
+        produto.valorVista =
+            double.parse(row["produtoservico"]?["precoavista"]);
+        produto.valorPrazo = double.parse(row["produtoservico"]?["precoprazo"]);
+        produto.custo = row["produtoservico"]?["custo"] == null
+            ? 0
+            : double.parse(row["produtoservico"]?["custo"]);
         produto.tipoProduto = row["produtoservico"]?["tipopro"];
         produto.tipoServico = row["produtoservico"]?["tiposer"];
-        produto.marca.id = row["produtoservico"]?["marca_id"];
+        produto.marca.id =
+            row["marca"]?["id"] == null ? 0 : row["marca"]?["id"];
+        if (produto.marca.id != 0) {
+          produto.marca.nome = row["marca"]?["nome"];
+        } else {
+          produto.marca.nome = "";
+        }
+
         produtos.add(produto);
       }
     } catch (e) {

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:sistema_ordem_servico/controle/controle_ordemservico.dart';
 import 'package:sistema_ordem_servico/modelo/ordemservico.dart';
-import 'package:sistema_ordem_servico/visao/form_ordemServico.dart';
+import 'package:sistema_ordem_servico/visao/ordemservico/form_ordemServico.dart';
 import 'package:sistema_ordem_servico/widgets/export_widgets.dart';
 import 'package:intl/intl.dart';
 import 'package:sistema_ordem_servico/widgets/search_field_appBar.dart';
@@ -31,7 +31,7 @@ class _ListOrdemServicoState extends State<ListOrdemServico> {
 
   Color corLista(OrdemServico ordem) {
     if (ordem.situacaoAtual == "Finalizado") {
-      return const Color.fromARGB(255, 24, 122, 28);
+      return Color.fromARGB(255, 52, 151, 56);
     } else if (ordem.previsaoEntrega.compareTo(DateTime.now()) < 0 &&
         ordem.situacaoAtual != "Finalizado") {
       return const Color.fromARGB(255, 163, 35, 35);
@@ -42,28 +42,27 @@ class _ListOrdemServicoState extends State<ListOrdemServico> {
   Widget _listaOrdemServico(OrdemServico ordemServico, int indice) {
     return CustomListTile(
       object: ordemServico,
+      textoExcluir: "Deseja realmente excluir está ordem de serviço ?",
       index: indice + 1,
       color: corLista(ordemServico),
       title: Row(
         children: [
           if (ordemServico.cliente.nome == '') ...[
             Text(ordemServico.cliente.nomeFantasia!),
+            const SizedBox(width: 5),
             const Text("CNPJ:"),
             Text(ordemServico.cliente.cnpj!)
           ] else ...[
             Text(ordemServico.cliente.nome!),
+            const SizedBox(width: 5),
             const Text("CPF:"),
             Text(ordemServico.cliente.cpf!)
           ],
-          const SizedBox(width: 20),
-          const Text("Data Cadastro:"),
-          Text(formatterData.format(ordemServico.dataCadastro)),
-          const SizedBox(width: 5),
-          const Text("Previsão de entrega:"),
-          Text(formatterData.format(ordemServico.previsaoEntrega)),
           const SizedBox(width: 15),
-          const Text('Valor Total:'),
-          Text(ordemServico.valorTotal.toStringAsFixed(2).replaceAll('.', ','))
+          const Text('Valor Total A Vista:'),
+          Text(
+              "R\$${ordemServico.valorTotalVista.toStringAsFixed(2).replaceAll('.', ',')}"),
+          const SizedBox(width: 15),
         ],
       ),
       subtitle: Row(children: [
@@ -71,13 +70,22 @@ class _ListOrdemServicoState extends State<ListOrdemServico> {
         Text(ordemServico.veiculo.modelo),
         const SizedBox(width: 5),
         const Text("Placa:"),
-        Text(ordemServico.veiculo.marca.nome)
+        Text(ordemServico.veiculo.placa)
       ]),
       button1: () {
         _controle.carregarOrdem(ordemServico).then((value) {
           _controle.ordemServicoEmEdicao = value;
-          Navigator.push(context,
-              MaterialPageRoute(builder: ((context) => FormOrdemServico())));
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: ((context) => FormOrdemServico(
+                        controle: _controle,
+                        onSaved: () {
+                          setState(() {
+                            _controle.pesquisarOrdem();
+                          });
+                        },
+                      ))));
         });
       },
       button2: () {
@@ -131,7 +139,14 @@ class _ListOrdemServicoState extends State<ListOrdemServico> {
                 Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: ((context) => FormOrdemServico())));
+                        builder: ((context) => FormOrdemServico(
+                              controle: _controle,
+                              onSaved: (() {
+                                setState(() {
+                                  _controle.pesquisarOrdem();
+                                });
+                              }),
+                            ))));
               },
               icon: const Icon(Icons.add))
         ],

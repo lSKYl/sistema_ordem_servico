@@ -131,3 +131,10 @@ create table usuario (
 	funcionaio_id integer references funcionario(id),
 	registroAtivo boolean default true
 );
+
+create table vetorcarro (
+	id serial primary key,
+	id_ordemServico integer references ordemServico(id),
+	
+	registroAtivo boolean default true
+);

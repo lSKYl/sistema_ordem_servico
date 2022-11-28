@@ -30,6 +30,7 @@ class _ListClienteState extends State<ListCliente> {
   Widget _listaCliente(Cliente cliente, int indice) {
     return CustomListTile(
       object: cliente,
+      textoExcluir: "Desjea realmente excluir este cliente ?",
       index: indice + 1,
       title: Row(children: [
         if (cliente.nome == '') ...[

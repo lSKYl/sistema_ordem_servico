@@ -12,8 +12,8 @@ class ClienteDAO {
         if (cliente.id > 0) {
           await ctx
               .query("""update pessoa set nome = @nome, nomefantasia = @nomefantasia, endereco = @endereco, bairro = @bairro, cidade = @cidade, uf = @uf,
-               cep = @cep, complemento = @complemento, cnpj = @cnpj, cpf = @cpf, ie = @ie, numerorg = @numerorg, datacadastro = @datacadastro, obs = @obs, tipocli = @tipocli,
-                tipofor = @tipofor where id = @id""", substitutionValues: {
+               cep = @cep, complemento = @complemento, cnpj = @cnpj, cpf = @cpf, ie = @ie, numerorg = @numerorg, datacadastro = @datacadastro, obs = @obs, tipocli = @tipocli
+                 where id = @id""", substitutionValues: {
             "id": cliente.id,
             "nome": cliente.nome,
             "nomefantasia": cliente.nomeFantasia,
@@ -30,13 +30,12 @@ class ClienteDAO {
             "datacadastro": cliente.dataCadastro,
             "obs": cliente.obs,
             "tipocli": cliente.tipocC,
-            "tipofor": cliente.tipoF,
           });
         } else {
           List<Map<String, Map<String, dynamic>>> insertResult = await ctx
               .mappedResultsQuery("""insert into pessoa (nome, nomefantasia, endereco, bairro, cidade, uf, 
-              cep, complemento, cpf, cnpj, ie, numerorg, datacadastro, obs, tipocli, tipofor) VALUES (@nome, @nomefantasia, @endereco, @bairro, @cidade, 
-              @uf, @cep, @complemento, @cpf, @cnpj, @ie, @numerorg, @datacadastro, @obs, @tipocli, @tipofor) returning id""",
+              cep, complemento, cpf, cnpj, ie, numerorg, datacadastro, obs, tipocli) VALUES (@nome, @nomefantasia, @endereco, @bairro, @cidade, 
+              @uf, @cep, @complemento, @cpf, @cnpj, @ie, @numerorg, @datacadastro, @obs, @tipocli) returning id""",
                   substitutionValues: {
                 "nome": cliente.nome,
                 "nomefantasia": cliente.nomeFantasia,
@@ -53,7 +52,6 @@ class ClienteDAO {
                 "datacadastro": cliente.dataCadastro,
                 "obs": cliente.obs,
                 "tipocli": cliente.tipocC,
-                "tipofor": cliente.tipoF,
               });
 
           for (final row in insertResult) {

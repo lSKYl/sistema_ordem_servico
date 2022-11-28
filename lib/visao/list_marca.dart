@@ -33,6 +33,7 @@ class _ListMarcaState extends State<ListMarca> {
     return CustomListTile(
       object: marca,
       index: indice + 1,
+      textoExcluir: "Deseja realmente excluir está marca ?",
       title: Text(
         marca.nome,
         style: TextStyle(fontWeight: FontWeight.bold),

@@ -31,6 +31,7 @@ class _ListProdutoState extends State<ListProduto> {
     return CustomListTile(
       color: produto.registroAtivo == true ? Colors.white : Colors.red,
       object: produto,
+      textoExcluir: "Deseja excluir este produto ?",
       index: indice + 1,
       title: Row(
         children: [

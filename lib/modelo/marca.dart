@@ -1,18 +1,23 @@
 class Marca {
   int _id = 0;
-  String? _nome;
+  String? _nome = "";
   bool _registroAtivo = true;
-  int get id => _id;
 
-  set id(int value) => _id = value;
+  int get id => this._id;
 
-  get nome => _nome;
+  set id(int value) => this._id = value;
 
-  set nome(value) => _nome = value;
+  get nome => this._nome;
 
-  get registroAtivo => _registroAtivo;
+  set nome(value) => this._nome = value;
 
-  set registroAtivo(value) => _registroAtivo = value;
+  get registroAtivo => this._registroAtivo;
+
+  set registroAtivo(value) => this._registroAtivo = value;
+
+  get getId => this.id;
+
+  set setId(id) => this.id = id;
 
   @override
   String toString() {

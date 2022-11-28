@@ -3,48 +3,48 @@ import 'package:sistema_ordem_servico/modelo/marcaveiculo.dart';
 
 class Veiculo {
   int _id = 0;
-  String? _modelo;
-  String? _placa;
-  String? _tipodeVeiculo;
-  String? _cor;
-  String? _obs;
+  String? _modelo = "";
+  String? _placa = "";
+  String? _tipodeVeiculo = "";
+  String? _cor = "";
+  String? _obs = "";
   Cliente _cliente = Cliente();
   bool _registroAtivo = true;
 
   MarcaVeiculo _marca = MarcaVeiculo();
-  int get id => _id;
+  get id => this._id;
 
-  set id(int value) => _id = value;
+  set id(value) => this._id = value;
 
-  get modelo => _modelo;
+  get modelo => this._modelo;
 
-  set modelo(value) => _modelo = value;
+  set modelo(value) => this._modelo = value;
 
-  get placa => _placa;
+  get placa => this._placa;
 
-  set placa(value) => _placa = value;
+  set placa(value) => this._placa = value;
 
-  get tipodeVeiculo => _tipodeVeiculo;
+  get tipodeVeiculo => this._tipodeVeiculo;
 
-  set tipodeVeiculo(value) => _tipodeVeiculo = value;
+  set tipodeVeiculo(value) => this._tipodeVeiculo = value;
 
-  get cor => _cor;
+  get cor => this._cor;
 
-  set cor(value) => _cor = value;
+  set cor(value) => this._cor = value;
 
-  get obs => _obs;
+  get obs => this._obs;
 
-  set obs(value) => _obs = value;
+  set obs(value) => this._obs = value;
 
-  get cliente => _cliente;
+  get cliente => this._cliente;
 
-  set cliente(value) => _cliente = value;
+  set cliente(value) => this._cliente = value;
 
-  get registroAtivo => _registroAtivo;
+  get registroAtivo => this._registroAtivo;
 
-  set registroAtivo(value) => _registroAtivo = value;
+  set registroAtivo(value) => this._registroAtivo = value;
 
-  get marca => _marca;
+  get marca => this._marca;
 
-  set marca(value) => _marca = value;
+  set marca(value) => this._marca = value;
 }

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:string_validator/string_validator.dart';
+
 import 'package:flutter/services.dart';
+import 'package:validatorless/validatorless.dart';
 
 class CustomTextField extends StatelessWidget {
   const CustomTextField(

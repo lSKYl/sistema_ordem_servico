@@ -1,16 +1,16 @@
 class Contato {
   int _id = 0;
-  String? _tipo;
-  String? _numero;
-  int get id => _id;
+  String? _tipo = "";
+  String? _numero = "";
+  int get id => this._id;
 
-  set id(int value) => _id = value;
+  set id(int value) => this._id = value;
 
-  get tipo => _tipo;
+  get tipo => this._tipo;
 
-  set tipo(value) => _tipo = value;
+  set tipo(value) => this._tipo = value;
 
-  get numero => _numero;
+  get numero => this._numero;
 
-  set numero(value) => _numero = value;
+  set numero(value) => this._numero = value;
 }

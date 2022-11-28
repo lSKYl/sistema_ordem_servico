@@ -9,8 +9,8 @@ class ListTileDialog extends StatelessWidget {
       this.onTap,
       this.indice});
   final Object object;
-  final String? nome;
-  final String? subtitulo;
+  final Widget? nome;
+  final Widget? subtitulo;
   final int? indice;
   final void Function()? onTap;
 
@@ -23,8 +23,8 @@ class ListTileDialog extends StatelessWidget {
             color: Colors.white, borderRadius: BorderRadius.circular(20)),
         child: ListTile(
           leading: CircleAvatar(child: Text("$indice")),
-          title: Text(nome!),
-          subtitle: Text(subtitulo!),
+          title: nome,
+          subtitle: subtitulo,
           onTap: onTap,
         ),
       ),

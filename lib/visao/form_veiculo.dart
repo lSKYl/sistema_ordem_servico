@@ -63,9 +63,9 @@ class _FormVeiculoState extends State<FormVeiculo> {
                 return SizedBox(
                   child: ListTileDialog(
                     object: _controleMarca.marcas[index],
-                    nome: marca.nome!,
+                    nome: Text(marca.nome),
                     indice: index + 1,
-                    subtitulo: "",
+                    subtitulo: const Text(""),
                     onTap: () {
                       _controleMarca.carregarMarca(marca).then((value) {
                         setState(() {
@@ -109,9 +109,11 @@ class _FormVeiculoState extends State<FormVeiculo> {
                     child: ListTileDialog(
                       object: _controlePessoa.clientes[index],
                       nome: cliente.nome == ""
-                          ? cliente.nomeFantasia
-                          : cliente.nome,
-                      subtitulo: cliente.cpf == "" ? cliente.cnpj : cliente.cpf,
+                          ? Text(cliente.nomeFantasia)
+                          : Text(cliente.nome),
+                      subtitulo: cliente.cpf == ""
+                          ? Text(cliente.cnpj!)
+                          : Text(cliente.cpf),
                       indice: index + 1,
                       onTap: (() {
                         _controlePessoa.carregarCliente(cliente).then((value) {

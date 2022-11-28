@@ -31,6 +31,7 @@ class _ListFormPagState extends State<ListFormPag> {
   Widget _listaFormaPag(FormaPagamento forma, int indice) {
     return CustomListTile(
       object: forma,
+      textoExcluir: "Deseja realmente excluir está forma de pagamento ?",
       index: indice + 1,
       title: Text(
         forma.nome,

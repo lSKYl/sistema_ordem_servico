@@ -2,87 +2,89 @@ import 'package:sistema_ordem_servico/modelo/marca.dart';
 
 class ProdutoServico {
   int _id = 0;
-  String? _nome;
-  String? _referenciaProduto;
-  String? _un;
-  String? _descricaoProduto;
-  String? _descricaoServico;
-  String? _descricaoAdicionalProduto;
-  String? _descricaoAdicionalServico;
+  String? _nome = "";
+  String? _referenciaProduto = "";
+  String? _un = "";
+  String? _descricaoProduto = "";
+  String? _descricaoServico = "";
+  String? _descricaoAdicionalProduto = "";
+  String? _descricaoAdicionalServico = "";
   bool _tipoServico = false;
   bool _tipoProduto = true;
   double _custo = 0;
   Marca _marca = Marca();
-  String? _obs;
+  String? _obs = "";
   double _valorVista = 0;
   double _valorPrazo = 0;
   bool _registroAtivo = true;
   DateTime _dataCadastro = DateTime.now();
-  int get id => _id;
+  int get id => this._id;
 
-  set id(int value) => _id = value;
+  set id(int value) => this._id = value;
 
-  get nome => _nome;
+  get nome => this._nome;
 
-  set nome(value) => _nome = value;
+  set nome(value) => this._nome = value;
 
-  get referenciaProduto => _referenciaProduto;
+  get referenciaProduto => this._referenciaProduto;
 
-  set referenciaProduto(value) => _referenciaProduto = value;
+  set referenciaProduto(value) => this._referenciaProduto = value;
 
-  get un => _un;
+  get un => this._un;
 
-  set un(value) => _un = value;
+  set un(value) => this._un = value;
 
-  get descricaoProduto => _descricaoProduto;
+  get descricaoProduto => this._descricaoProduto;
 
-  set descricaoProduto(value) => _descricaoProduto = value;
+  set descricaoProduto(value) => this._descricaoProduto = value;
 
-  get descricaoServico => _descricaoServico;
+  get descricaoServico => this._descricaoServico;
 
-  set descricaoServico(value) => _descricaoServico = value;
+  set descricaoServico(value) => this._descricaoServico = value;
 
-  get descricaoAdicionalProduto => _descricaoAdicionalProduto;
+  get descricaoAdicionalProduto => this._descricaoAdicionalProduto;
 
-  set descricaoAdicionalProduto(value) => _descricaoAdicionalProduto = value;
+  set descricaoAdicionalProduto(value) =>
+      this._descricaoAdicionalProduto = value;
 
-  get descricaoAdicionalServico => _descricaoAdicionalServico;
+  get descricaoAdicionalServico => this._descricaoAdicionalServico;
 
-  set descricaoAdicionalServico(value) => _descricaoAdicionalServico = value;
+  set descricaoAdicionalServico(value) =>
+      this._descricaoAdicionalServico = value;
 
-  get tipoServico => _tipoServico;
+  get tipoServico => this._tipoServico;
 
-  set tipoServico(value) => _tipoServico = value;
+  set tipoServico(value) => this._tipoServico = value;
 
-  get tipoProduto => _tipoProduto;
+  get tipoProduto => this._tipoProduto;
 
-  set tipoProduto(value) => _tipoProduto = value;
+  set tipoProduto(value) => this._tipoProduto = value;
 
-  get custo => _custo;
+  get custo => this._custo;
 
-  set custo(value) => _custo = value;
+  set custo(value) => this._custo = value;
 
-  get marca => _marca;
+  get marca => this._marca;
 
-  set marca(value) => _marca = value;
+  set marca(value) => this._marca = value;
 
-  get obs => _obs;
+  get obs => this._obs;
 
-  set obs(value) => _obs = value;
+  set obs(value) => this._obs = value;
 
-  get valorVista => _valorVista;
+  get valorVista => this._valorVista;
 
-  set valorVista(value) => _valorVista = value;
+  set valorVista(value) => this._valorVista = value;
 
-  get valorPrazo => _valorPrazo;
+  get valorPrazo => this._valorPrazo;
 
-  set valorPrazo(value) => _valorPrazo = value;
+  set valorPrazo(value) => this._valorPrazo = value;
 
-  get registroAtivo => _registroAtivo;
+  get registroAtivo => this._registroAtivo;
 
-  set registroAtivo(value) => _registroAtivo = value;
+  set registroAtivo(value) => this._registroAtivo = value;
 
-  get dataCadastro => _dataCadastro;
+  get dataCadastro => this._dataCadastro;
 
-  set dataCadastro(value) => _dataCadastro = value;
+  set dataCadastro(value) => this._dataCadastro = value;
 }

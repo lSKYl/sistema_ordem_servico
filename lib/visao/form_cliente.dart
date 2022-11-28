@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:sistema_ordem_servico/controle/controle_cliente.dart';
-import 'package:sistema_ordem_servico/modelo/pessoa.dart';
-import 'package:sistema_ordem_servico/modelo/contato.dart';
 import 'package:sistema_ordem_servico/widgets/export_widgets.dart';
-import 'package:string_validator/string_validator.dart';
 import 'package:validatorless/validatorless.dart';
 import 'package:intl/intl.dart';
 
@@ -26,7 +23,10 @@ class _FormClienteState extends State<FormCliente> {
   void initState() {
     super.initState();
     setState(() {
-      if (widget.controle!.clienteEmEdicao.cpf != '') {
+      if (widget.controle!.clienteEmEdicao.cpf == '' &&
+          widget.controle!.clienteEmEdicao.cnpj == '') {
+        opEscolhida = 'fisica';
+      } else if (widget.controle!.clienteEmEdicao.cpf != '') {
         opEscolhida = 'fisica';
       } else {
         opEscolhida = 'juridica';
@@ -145,7 +145,10 @@ class _FormClienteState extends State<FormCliente> {
                       onSaved: (String? value) {
                         widget.controle?.clienteEmEdicao.cpf = value;
                       },
-                      validator: validar,
+                      validator: Validatorless.multiple([
+                        Validatorless.required("Campo obrigatório"),
+                        Validatorless.cpf("Esse CPF não é valido")
+                      ]),
                       maxlength: 11,
                     ),
                     const SizedBox(
