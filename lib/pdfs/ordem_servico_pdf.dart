@@ -18,6 +18,7 @@ class PdfInvoiceService {
     final pdf = pw.Document();
     pdf.addPage(
       pw.Page(
+        margin: EdgeInsets.all(20),
         pageFormat: PdfPageFormat.a4,
         build: (pw.Context context) {
           return pw.Column(children: [
@@ -26,8 +27,6 @@ class PdfInvoiceService {
             buildCliente(ordem),
             Divider(),
             buildVeiculo(ordem),
-            Divider(),
-            observacoes(ordem),
             Divider(),
             tabelaServicosEProdutos(ordem),
             Divider(),
@@ -61,9 +60,10 @@ class PdfInvoiceService {
         headers: headers,
         data: data,
         border: null,
-        headerStyle: TextStyle(fontWeight: FontWeight.bold),
+        headerStyle: TextStyle(fontWeight: FontWeight.bold, fontSize: 12),
+        cellStyle: TextStyle(fontSize: 10),
         headerDecoration: const BoxDecoration(color: PdfColors.grey300),
-        cellHeight: 30,
+        cellHeight: 10,
         cellAlignments: {0: Alignment.centerLeft, 1: Alignment.centerLeft});
   }
 
@@ -88,9 +88,10 @@ class PdfInvoiceService {
         headers: headers,
         data: data,
         border: null,
-        headerStyle: TextStyle(fontWeight: FontWeight.bold),
+        headerStyle: TextStyle(fontWeight: FontWeight.bold, fontSize: 12),
+        cellStyle: TextStyle(fontSize: 10),
         headerDecoration: const BoxDecoration(color: PdfColors.grey300),
-        cellHeight: 30,
+        cellHeight: 10,
         cellAlignments: {
           0: Alignment.centerLeft,
           1: Alignment.centerRight,
@@ -101,35 +102,28 @@ class PdfInvoiceService {
   }
 
   static Widget observacoes(OrdemServico ordem) {
-    return Container(
-        decoration: BoxDecoration(
-            border: Border.all(), borderRadius: BorderRadius.circular(2)),
-        child: Padding(
-            padding: EdgeInsets.all(4),
-            child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  Row(children: [
-                    buildText(title: "Problema Constado: ", size: 10),
-                    buildTextUnderline(ordem.problemaConstado! == ""
-                        ? "_"
-                        : ordem.problemaConstado!)
-                  ]),
-                  SizedBox(height: 10),
-                  Row(children: [
-                    buildText(title: "Serviço executado: ", size: 10),
-                    buildTextUnderline(ordem.servicoExecutado! == ""
-                        ? "_"
-                        : ordem.servicoExecutado!)
-                  ]),
-                  SizedBox(height: 10),
-                  Row(children: [
-                    buildText(title: "Obs: ", size: 10),
-                    buildTextUnderline(ordem.obsComplementares! == ""
-                        ? "_"
-                        : ordem.obsComplementares!)
-                  ])
-                ])));
+    return Padding(
+        padding: const EdgeInsets.all(4),
+        child:
+            Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
+          Row(children: [
+            buildText(title: "Problema Constado: ", size: 10),
+            buildTextUnderline(
+                ordem.problemaConstado! == "" ? "_" : ordem.problemaConstado!)
+          ]),
+          SizedBox(height: 10),
+          Row(children: [
+            buildText(title: "Serviço executado: ", size: 10),
+            buildTextUnderline(
+                ordem.servicoExecutado! == "" ? "_" : ordem.servicoExecutado!)
+          ]),
+          SizedBox(height: 10),
+          Row(children: [
+            buildText(title: "Obs: ", size: 10),
+            buildTextUnderline(
+                ordem.obsComplementares! == "" ? "_" : ordem.obsComplementares!)
+          ])
+        ]));
   }
 
   static Widget valorTotal(OrdemServico ordem) {
@@ -263,7 +257,7 @@ class PdfInvoiceService {
                   Row(children: [
                     buildText(title: "Nome: ", size: 10),
                     SizedBox(
-                        width: 200,
+                        width: 225,
                         child: buildTextUnderline(
                             ordemServico.cliente.nome == ""
                                 ? ordemServico.cliente.nomeFantasia
@@ -277,9 +271,12 @@ class PdfInvoiceService {
                   SizedBox(height: 10),
                   Row(children: [
                     buildText(title: "Endereço: ", size: 10),
-                    buildTextUnderline(ordemServico.cliente.endereco == ""
-                        ? "_"
-                        : ordemServico.cliente.endereco),
+                    SizedBox(
+                        width: 209,
+                        child: buildTextUnderline(
+                            ordemServico.cliente.endereco == ""
+                                ? "_"
+                                : ordemServico.cliente.endereco)),
                     SizedBox(width: 25),
                     buildText(title: "Bairro: ", size: 10),
                     buildTextUnderline(ordemServico.cliente.bairro == ""
@@ -290,7 +287,7 @@ class PdfInvoiceService {
                   Row(children: [
                     buildText(title: "Cidade: ", size: 10),
                     SizedBox(
-                        width: 195,
+                        width: 220,
                         child: buildTextUnderline(
                             ordemServico.cliente.cidade! == ""
                                 ? "_"
@@ -318,11 +315,13 @@ class PdfInvoiceService {
 
   static Widget buildVeiculo(OrdemServico ordemServico) {
     return Container(
-        decoration: BoxDecoration(
-            border: Border.all(), borderRadius: BorderRadius.circular(4)),
-        child: Padding(
-            padding: EdgeInsets.all(4),
-            child: Row(children: [
+      decoration: BoxDecoration(
+          border: Border.all(), borderRadius: BorderRadius.circular(4)),
+      child: Padding(
+        padding: EdgeInsets.all(4),
+        child: Column(children: [
+          Row(
+            children: [
               buildText(title: "Modelo: ", size: 10),
               buildTextUnderline(ordemServico.veiculo.modelo),
               SizedBox(width: 10),
@@ -338,7 +337,31 @@ class PdfInvoiceService {
               buildTextUnderline(ordemServico.veiculo.cor == ""
                   ? "_"
                   : ordemServico.veiculo.cor)
-            ])));
+            ],
+          ),
+          SizedBox(height: 10),
+          Text("Partes do veiculo trabalhada", style: TextStyle(fontSize: 6)),
+          SizedBox(
+              child: Center(
+                  child: Image(MemoryImage(ordemServico.vetorVeiculo!)))),
+          SizedBox(height: 10),
+          Row(children: [
+            buildText(title: "Problema Constado: ", size: 10),
+            buildTextUnderline(ordemServico.problemaConstado! == ""
+                ? "_"
+                : ordemServico.problemaConstado!)
+          ]),
+          SizedBox(height: 10),
+          Row(children: [
+            buildText(title: "Serviço executado: ", size: 10),
+            buildTextUnderline(ordemServico.servicoExecutado! == ""
+                ? "_"
+                : ordemServico.servicoExecutado!)
+          ]),
+          SizedBox(height: 10),
+        ]),
+      ),
+    );
   }
 
   static Widget buildFooter() {

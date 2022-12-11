@@ -18,73 +18,71 @@ class ProdutoServico {
   double _valorPrazo = 0;
   bool _registroAtivo = true;
   DateTime _dataCadastro = DateTime.now();
-  int get id => this._id;
+  int get id => _id;
 
-  set id(int value) => this._id = value;
+  set id(int value) => _id = value;
 
-  get nome => this._nome;
+  get nome => _nome;
 
-  set nome(value) => this._nome = value;
+  set nome(value) => _nome = value;
 
-  get referenciaProduto => this._referenciaProduto;
+  get referenciaProduto => _referenciaProduto;
 
-  set referenciaProduto(value) => this._referenciaProduto = value;
+  set referenciaProduto(value) => _referenciaProduto = value;
 
-  get un => this._un;
+  get un => _un;
 
-  set un(value) => this._un = value;
+  set un(value) => _un = value;
 
-  get descricaoProduto => this._descricaoProduto;
+  get descricaoProduto => _descricaoProduto;
 
-  set descricaoProduto(value) => this._descricaoProduto = value;
+  set descricaoProduto(value) => _descricaoProduto = value;
 
-  get descricaoServico => this._descricaoServico;
+  get descricaoServico => _descricaoServico;
 
-  set descricaoServico(value) => this._descricaoServico = value;
+  set descricaoServico(value) => _descricaoServico = value;
 
-  get descricaoAdicionalProduto => this._descricaoAdicionalProduto;
+  get descricaoAdicionalProduto => _descricaoAdicionalProduto;
 
-  set descricaoAdicionalProduto(value) =>
-      this._descricaoAdicionalProduto = value;
+  set descricaoAdicionalProduto(value) => _descricaoAdicionalProduto = value;
 
-  get descricaoAdicionalServico => this._descricaoAdicionalServico;
+  get descricaoAdicionalServico => _descricaoAdicionalServico;
 
-  set descricaoAdicionalServico(value) =>
-      this._descricaoAdicionalServico = value;
+  set descricaoAdicionalServico(value) => _descricaoAdicionalServico = value;
 
-  get tipoServico => this._tipoServico;
+  get tipoServico => _tipoServico;
 
-  set tipoServico(value) => this._tipoServico = value;
+  set tipoServico(value) => _tipoServico = value;
 
-  get tipoProduto => this._tipoProduto;
+  get tipoProduto => _tipoProduto;
 
-  set tipoProduto(value) => this._tipoProduto = value;
+  set tipoProduto(value) => _tipoProduto = value;
 
-  get custo => this._custo;
+  get custo => _custo;
 
-  set custo(value) => this._custo = value;
+  set custo(value) => _custo = value;
 
-  get marca => this._marca;
+  get marca => _marca;
 
-  set marca(value) => this._marca = value;
+  set marca(value) => _marca = value;
 
-  get obs => this._obs;
+  get obs => _obs;
 
-  set obs(value) => this._obs = value;
+  set obs(value) => _obs = value;
 
-  get valorVista => this._valorVista;
+  get valorVista => _valorVista;
 
-  set valorVista(value) => this._valorVista = value;
+  set valorVista(value) => _valorVista = value;
 
-  get valorPrazo => this._valorPrazo;
+  get valorPrazo => _valorPrazo;
 
-  set valorPrazo(value) => this._valorPrazo = value;
+  set valorPrazo(value) => _valorPrazo = value;
 
-  get registroAtivo => this._registroAtivo;
+  get registroAtivo => _registroAtivo;
 
-  set registroAtivo(value) => this._registroAtivo = value;
+  set registroAtivo(value) => _registroAtivo = value;
 
-  get dataCadastro => this._dataCadastro;
+  get dataCadastro => _dataCadastro;
 
-  set dataCadastro(value) => this._dataCadastro = value;
+  set dataCadastro(value) => _dataCadastro = value;
 }

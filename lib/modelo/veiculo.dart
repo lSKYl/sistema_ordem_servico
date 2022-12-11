@@ -12,39 +12,39 @@ class Veiculo {
   bool _registroAtivo = true;
 
   MarcaVeiculo _marca = MarcaVeiculo();
-  get id => this._id;
+  get id => _id;
 
-  set id(value) => this._id = value;
+  set id(value) => _id = value;
 
-  get modelo => this._modelo;
+  get modelo => _modelo;
 
-  set modelo(value) => this._modelo = value;
+  set modelo(value) => _modelo = value;
 
-  get placa => this._placa;
+  get placa => _placa;
 
-  set placa(value) => this._placa = value;
+  set placa(value) => _placa = value;
 
-  get tipodeVeiculo => this._tipodeVeiculo;
+  get tipodeVeiculo => _tipodeVeiculo;
 
-  set tipodeVeiculo(value) => this._tipodeVeiculo = value;
+  set tipodeVeiculo(value) => _tipodeVeiculo = value;
 
-  get cor => this._cor;
+  get cor => _cor;
 
-  set cor(value) => this._cor = value;
+  set cor(value) => _cor = value;
 
-  get obs => this._obs;
+  get obs => _obs;
 
-  set obs(value) => this._obs = value;
+  set obs(value) => _obs = value;
 
-  get cliente => this._cliente;
+  get cliente => _cliente;
 
-  set cliente(value) => this._cliente = value;
+  set cliente(value) => _cliente = value;
 
-  get registroAtivo => this._registroAtivo;
+  get registroAtivo => _registroAtivo;
 
-  set registroAtivo(value) => this._registroAtivo = value;
+  set registroAtivo(value) => _registroAtivo = value;
 
-  get marca => this._marca;
+  get marca => _marca;
 
-  set marca(value) => this._marca = value;
+  set marca(value) => _marca = value;
 }

@@ -10,12 +10,13 @@ class InkCustomStack extends StatefulWidget {
       this.alturaCont,
       this.largura,
       this.onTap,
-      this.marca});
+      required this.marca});
   final double? baixo;
   final double? esquerda;
   final double? direita;
   final double? altura;
-  bool? marca;
+  bool marca;
+  String data = "";
   final double? alturaCont;
   final double? largura;
   final void Function()? onTap;
@@ -28,6 +29,14 @@ class _InkCustomStackState extends State<InkCustomStack> {
   String data = "";
 
   @override
+  void initState() {
+    super.initState();
+    setState(() {
+      widget.marca == true ? data = "X" : data = "";
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Positioned(
         bottom: widget.baixo,
@@ -35,24 +44,13 @@ class _InkCustomStackState extends State<InkCustomStack> {
         right: widget.direita,
         top: widget.altura,
         child: InkWell(
-          onTap: () {
-            setState(() {
-              if (data == "X") {
-                data = "";
-                widget.marca = false;
-              } else {
-                data = "X";
-                widget.marca = true;
-              }
-              widget.onTap;
-            });
-          },
+          onTap: widget.onTap,
           child: SizedBox(
             height: widget.alturaCont,
             width: widget.largura,
             child: Center(
-              child: data == ""
-                  ? const Text("")
+              child: widget.marca == false
+                  ? const Text("x")
                   : const Text(
                       "X",
                       style: TextStyle(color: Colors.red, fontSize: 24),

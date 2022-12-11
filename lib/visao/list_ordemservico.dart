@@ -32,7 +32,7 @@ class _ListOrdemServicoState extends State<ListOrdemServico> {
   Color corLista(OrdemServico ordem) {
     if (ordem.situacaoAtual == "Finalizado") {
       return Color.fromARGB(255, 52, 151, 56);
-    } else if (ordem.previsaoEntrega.compareTo(DateTime.now()) < 0 &&
+    } else if (ordem.previsaoEntrega.isBefore(DateTime.now()) &&
         ordem.situacaoAtual != "Finalizado") {
       return const Color.fromARGB(255, 163, 35, 35);
     }

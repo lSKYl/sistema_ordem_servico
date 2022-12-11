@@ -49,7 +49,7 @@ class _FormClienteState extends State<FormCliente> {
 
   String? validar(text) {
     if (text == null || text.isEmpty) {
-      return 'Campo obrigatório';
+      return 'Campo obrigatório!';
     }
     return null;
   }
@@ -146,8 +146,8 @@ class _FormClienteState extends State<FormCliente> {
                         widget.controle?.clienteEmEdicao.cpf = value;
                       },
                       validator: Validatorless.multiple([
-                        Validatorless.required("Campo obrigatório"),
-                        Validatorless.cpf("Esse CPF não é valido")
+                        Validatorless.required("Campo obrigatório!"),
+                        Validatorless.cpf("Esse CPF não é valido!")
                       ]),
                       maxlength: 11,
                     ),
@@ -188,7 +188,10 @@ class _FormClienteState extends State<FormCliente> {
                       label: 'CNPJ',
                       obscureText: false,
                       readonly: false,
-                      validator: validar,
+                      validator: Validatorless.multiple([
+                        Validatorless.required("Campo obrigatório!"),
+                        Validatorless.cnpj("Esse CNPJ não é valido!")
+                      ]),
                       onSaved: (String? value) {
                         widget.controle?.clienteEmEdicao.cnpj = value;
                       },
@@ -308,6 +311,8 @@ class _FormClienteState extends State<FormCliente> {
                     controller: TextEditingController(
                         text: widget.controle?.clienteEmEdicao.email),
                     maxlength: 40,
+                    validator: Validatorless.multiple(
+                        [Validatorless.email("Esse CPF email não é valido!")]),
                   ),
                   const SizedBox(height: 10),
                   CustomTextField(

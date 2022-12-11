@@ -6,6 +6,10 @@ import 'package:sistema_ordem_servico/modelo/formapagamentoOS.dart';
 import 'package:sistema_ordem_servico/modelo/funcionario.dart';
 import 'package:sistema_ordem_servico/modelo/ordemservicoprodutos.dart';
 import 'package:sistema_ordem_servico/modelo/veiculo.dart';
+import 'package:sistema_ordem_servico/modelo/vetorhatch.dart';
+import 'package:sistema_ordem_servico/modelo/vetorpickup.dart';
+import 'package:sistema_ordem_servico/modelo/vetorsedan.dart';
+import 'package:sistema_ordem_servico/modelo/vetorsuv.dart';
 
 import 'formapagamento.dart';
 
@@ -20,7 +24,10 @@ class OrdemServico {
   bool _registroAtivo = true;
 
   Veiculo _veiculo = Veiculo();
-
+  VetorSedan sedan = VetorSedan();
+  VetorPickup pickup = VetorPickup();
+  VetorHatch hatch = VetorHatch();
+  VetorSuv suv = VetorSuv();
   List<OrdemServicoProdutos> _ordemservicoprodutos = [];
   String? _problemaConstado = "";
   String? _servicoExecutado = "";
@@ -31,95 +38,98 @@ class OrdemServico {
   double _valorCusto = 0;
   double _valorPecas = 0;
   Uint8List? vetorVeiculo;
+  bool vetorSedan = true;
+  bool vetorCamionete = false;
+  bool vetorHatch = false;
+  bool vetorSuv = false;
   double _valorMaodeObra = 0;
   double _valorTotalVista = 0;
 
   List<FormaPagamentoOrdemServico> _formas = [];
-  int get id => this._id;
+  int get id => _id;
 
-  set id(int value) => this._id = value;
+  set id(int value) => _id = value;
 
-  DateTime get dataCadastro => this._dataCadastro;
+  DateTime get dataCadastro => _dataCadastro;
 
-  set dataCadastro(DateTime value) => this._dataCadastro = value;
+  set dataCadastro(DateTime value) => _dataCadastro = value;
 
-  DateTime get previsaoEntrega => this._previsaoEntrega;
+  DateTime get previsaoEntrega => _previsaoEntrega;
 
-  set previsaoEntrega(DateTime value) => this._previsaoEntrega = value;
+  set previsaoEntrega(DateTime value) => _previsaoEntrega = value;
 
-  String get situacaoAtual => this._situacaoAtual;
+  String get situacaoAtual => _situacaoAtual;
 
-  set situacaoAtual(String value) => this._situacaoAtual = value;
+  set situacaoAtual(String value) => _situacaoAtual = value;
 
-  Cliente get cliente => this._cliente;
+  Cliente get cliente => _cliente;
 
-  set cliente(Cliente value) => this._cliente = value;
+  set cliente(Cliente value) => _cliente = value;
 
-  int get qtdPrazo => this._qtdPrazo;
+  int get qtdPrazo => _qtdPrazo;
 
-  set qtdPrazo(int value) => this._qtdPrazo = value;
+  set qtdPrazo(int value) => _qtdPrazo = value;
 
-  Funcionario get funcionario => this._funcionario;
+  Funcionario get funcionario => _funcionario;
 
-  set funcionario(Funcionario value) => this._funcionario = value;
+  set funcionario(Funcionario value) => _funcionario = value;
 
-  bool get registroAtivo => this._registroAtivo;
+  bool get registroAtivo => _registroAtivo;
 
-  set registroAtivo(bool value) => this._registroAtivo = value;
+  set registroAtivo(bool value) => _registroAtivo = value;
 
-  Veiculo get veiculo => this._veiculo;
+  Veiculo get veiculo => _veiculo;
 
-  set veiculo(Veiculo value) => this._veiculo = value;
+  set veiculo(Veiculo value) => _veiculo = value;
 
-  List<OrdemServicoProdutos> get ordemservicoprodutos =>
-      this._ordemservicoprodutos;
+  List<OrdemServicoProdutos> get ordemservicoprodutos => _ordemservicoprodutos;
 
   set ordemservicoprodutos(List<OrdemServicoProdutos> value) =>
-      this._ordemservicoprodutos = value;
+      _ordemservicoprodutos = value;
 
-  String? get problemaConstado => this._problemaConstado;
+  String? get problemaConstado => _problemaConstado;
 
-  set problemaConstado(String? value) => this._problemaConstado = value;
+  set problemaConstado(String? value) => _problemaConstado = value;
 
-  String? get servicoExecutado => this._servicoExecutado;
+  String? get servicoExecutado => _servicoExecutado;
 
-  set servicoExecutado(String? value) => this._servicoExecutado = value;
+  set servicoExecutado(String? value) => _servicoExecutado = value;
 
-  String? get obsComplementares => this._obsComplementares;
+  String? get obsComplementares => _obsComplementares;
 
-  set obsComplementares(String? value) => this._obsComplementares = value;
+  set obsComplementares(String? value) => _obsComplementares = value;
 
-  double get valorEntrada => this._valorEntrada;
+  double get valorEntrada => _valorEntrada;
 
-  set valorEntrada(double value) => this._valorEntrada = value;
+  set valorEntrada(double value) => _valorEntrada = value;
 
-  double get valorVista => this._valorVista;
+  double get valorVista => _valorVista;
 
-  set valorVista(double value) => this._valorVista = value;
+  set valorVista(double value) => _valorVista = value;
 
-  double get valorPrazo => this._valorPrazo;
+  double get valorPrazo => _valorPrazo;
 
-  set valorPrazo(double value) => this._valorPrazo = value;
+  set valorPrazo(double value) => _valorPrazo = value;
 
-  double get valorCusto => this._valorCusto;
+  double get valorCusto => _valorCusto;
 
-  set valorCusto(double value) => this._valorCusto = value;
+  set valorCusto(double value) => _valorCusto = value;
 
-  double get valorPecas => this._valorPecas;
+  double get valorPecas => _valorPecas;
 
-  set valorPecas(double value) => this._valorPecas = value;
+  set valorPecas(double value) => _valorPecas = value;
 
-  double get valorMaodeObra => this._valorMaodeObra;
+  double get valorMaodeObra => _valorMaodeObra;
 
-  set valorMaodeObra(double value) => this._valorMaodeObra = value;
+  set valorMaodeObra(double value) => _valorMaodeObra = value;
 
-  double get valorTotalVista => this._valorTotalVista;
+  double get valorTotalVista => _valorTotalVista;
 
-  set valorTotalVista(double value) => this._valorTotalVista = value;
+  set valorTotalVista(double value) => _valorTotalVista = value;
 
-  List<FormaPagamentoOrdemServico> get formas => this._formas;
+  List<FormaPagamentoOrdemServico> get formas => _formas;
 
-  set formas(List<FormaPagamentoOrdemServico> value) => this._formas = value;
+  set formas(List<FormaPagamentoOrdemServico> value) => _formas = value;
 
   void adicionarServico(OrdemServicoProdutos servicoProdutos) {
     ordemservicoprodutos.add(servicoProdutos);

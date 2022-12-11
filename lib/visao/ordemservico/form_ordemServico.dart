@@ -1,6 +1,8 @@
+import 'package:date_format/date_format.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
+
 import 'package:sistema_ordem_servico/controle/controle_cliente.dart';
 import 'package:sistema_ordem_servico/controle/controle_ordemservico.dart';
 import 'package:sistema_ordem_servico/controle/controle_produto.dart';
@@ -8,7 +10,10 @@ import 'package:sistema_ordem_servico/controle/controle_veiculo.dart';
 import 'package:sistema_ordem_servico/pdfs/ordem_servico_pdf.dart';
 import 'package:sistema_ordem_servico/visao/ordemservico/datatable_formapagamento.dart';
 import 'package:sistema_ordem_servico/visao/ordemservico/dialog_funcionario.dart';
-import 'package:sistema_ordem_servico/visao/ordemservico/stackcarroecamionete.dart';
+import 'package:sistema_ordem_servico/visao/ordemservico/vetorCamionete.dart';
+import 'package:sistema_ordem_servico/visao/ordemservico/vetorHatch.dart';
+import 'package:sistema_ordem_servico/visao/ordemservico/vetorSUV.dart';
+import 'package:sistema_ordem_servico/visao/ordemservico/vetorSedan.dart';
 import 'package:sistema_ordem_servico/widgets/export_widgets.dart';
 import 'export_ordemservico.dart';
 import 'package:screenshot/screenshot.dart';
@@ -28,10 +33,7 @@ class _FormOrdemServicoState extends State<FormOrdemServico> {
       text: widget.controle!.ordemServicoEmEdicao.valorEntrada
           .toStringAsFixed(2)
           .replaceAll('.', ','));
-  final ControlePessoa _controlePessoa = ControlePessoa();
-  final ControleVeiculo _controleVeiculo = ControleVeiculo();
-  final ControleProdutoServico _controleProdutoServico =
-      ControleProdutoServico();
+
   DateTime date = DateTime.now();
   var formatterData = DateFormat('dd/MM/yy');
   final TextEditingController _controladorCampoPesquisa =
@@ -52,8 +54,27 @@ class _FormOrdemServicoState extends State<FormOrdemServico> {
 
       widget.controle?.salvarOrdemEmEdicao().then((_) {
         if (widget.onSaved != null) widget.onSaved!();
+        Navigator.of(context).pop();
       });
     }
+  }
+
+  mostrarDialog(String content) {
+    showDialog(
+        context: context,
+        builder: ((context) {
+          return AlertDialog(
+            title: Text("ATENÇÃO"),
+            content: Text(content),
+            actions: [
+              TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: Text("Ok"))
+            ],
+          );
+        }));
   }
 
   String? validar(text) {
@@ -141,15 +162,21 @@ class _FormOrdemServicoState extends State<FormOrdemServico> {
       floatingActionButton: Wrap(
         direction: Axis.vertical,
         children: [
-          if (widget.controle!.ordemServicoEmEdicao.situacaoAtual !=
-              "Finalizado")
-            (FloatingActionButton.extended(
-              onPressed: () {
+          FloatingActionButton.extended(
+            onPressed: () {
+              if (widget.controle!.ordemServicoEmEdicao.ordemservicoprodutos
+                  .isEmpty) {
+                mostrarDialog(
+                    "Nenhum produto ou serviço utilizado, adicione um.");
+              } else if (widget.controle!.ordemServicoEmEdicao.formas.isEmpty) {
+                mostrarDialog("Nenhuma forma de pagamento adicionada!");
+              } else {
                 salvar(context);
-              },
-              label: const Text('Salvar'),
-              icon: const Icon(Icons.add),
-            )),
+              }
+            },
+            label: const Text('Salvar'),
+            icon: const Icon(Icons.add),
+          ),
           const SizedBox(height: 10),
           if (widget.controle!.ordemServicoEmEdicao.id > 0) ...[
             FloatingActionButton.extended(
@@ -177,6 +204,8 @@ class _FormOrdemServicoState extends State<FormOrdemServico> {
             const SizedBox(height: 10),
             FloatingActionButton.extended(
               onPressed: () async {
+                widget.controle!.ordemServicoEmEdicao.vetorVeiculo =
+                    await screenshotController.capture();
                 final data = await service
                     .createOrdemServico(widget.controle!.ordemServicoEmEdicao);
                 service.savePdfFile("ordem_servico$number", data);
@@ -675,8 +704,127 @@ class _FormOrdemServicoState extends State<FormOrdemServico> {
                   ),
                 ),
                 const SizedBox(height: 10),
-                VetorCarros(
-                    ordemServico: widget.controle!.ordemServicoEmEdicao),
+                const Center(
+                  child: Text(
+                    "Escolha o modelo do veiculo trabalhado",
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  ),
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Radio(
+                        value: true,
+                        groupValue:
+                            widget.controle!.ordemServicoEmEdicao.vetorSedan,
+                        onChanged: ((_) {
+                          setState(() {
+                            widget.controle!.ordemServicoEmEdicao.vetorSedan =
+                                true;
+                            widget.controle!.ordemServicoEmEdicao
+                                .vetorCamionete = false;
+                            widget.controle!.ordemServicoEmEdicao.vetorHatch =
+                                false;
+                            widget.controle!.ordemServicoEmEdicao.vetorSuv =
+                                false;
+                          });
+                        })),
+                    const Text("Sedan"),
+                    Radio(
+                        value: true,
+                        groupValue: widget
+                            .controle!.ordemServicoEmEdicao.vetorCamionete,
+                        onChanged: ((_) {
+                          setState(() {
+                            widget.controle!.ordemServicoEmEdicao
+                                .vetorCamionete = true;
+                            widget.controle!.ordemServicoEmEdicao.vetorSedan =
+                                false;
+                            widget.controle!.ordemServicoEmEdicao.vetorHatch =
+                                false;
+                            widget.controle!.ordemServicoEmEdicao.vetorSuv =
+                                false;
+                          });
+                        })),
+                    const Text("Picape"),
+                    Radio(
+                        value: true,
+                        groupValue:
+                            widget.controle!.ordemServicoEmEdicao.vetorHatch,
+                        onChanged: ((_) {
+                          setState(() {
+                            widget.controle!.ordemServicoEmEdicao.vetorHatch =
+                                true;
+                            widget.controle!.ordemServicoEmEdicao
+                                .vetorCamionete = false;
+                            widget.controle!.ordemServicoEmEdicao.vetorSedan =
+                                false;
+                            widget.controle!.ordemServicoEmEdicao.vetorSuv =
+                                false;
+                          });
+                        })),
+                    const Text("Hatch"),
+                    Radio(
+                        value: true,
+                        groupValue:
+                            widget.controle!.ordemServicoEmEdicao.vetorSuv,
+                        onChanged: ((_) {
+                          setState(() {
+                            widget.controle!.ordemServicoEmEdicao.vetorSuv =
+                                true;
+                            widget.controle!.ordemServicoEmEdicao
+                                .vetorCamionete = false;
+                            widget.controle!.ordemServicoEmEdicao.vetorSedan =
+                                false;
+                            widget.controle!.ordemServicoEmEdicao.vetorHatch =
+                                false;
+                          });
+                        })),
+                    const Text("SUV")
+                  ],
+                ),
+                const Center(
+                  child: Text(
+                    "Marque as partes que foram trabalhadas",
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                  ),
+                ),
+                if (widget.controle!.ordemServicoEmEdicao.vetorSedan)
+                  (Screenshot(
+                    controller: screenshotController,
+                    child: VetorSedan(
+                      ordemServico: widget.controle!.ordemServicoEmEdicao,
+                      callback: callback,
+                      ordemBloqueada: ordemBloqueada,
+                    ),
+                  ))
+                else if (widget.controle!.ordemServicoEmEdicao.vetorCamionete)
+                  (Screenshot(
+                    controller: screenshotController,
+                    child: VetorCamionete(
+                      ordemServico: widget.controle!.ordemServicoEmEdicao,
+                      callback: callback,
+                      ordemBloqueada: ordemBloqueada,
+                    ),
+                  ))
+                else if (widget.controle!.ordemServicoEmEdicao.vetorHatch)
+                  ((Screenshot(
+                    controller: screenshotController,
+                    child: VetorHatch(
+                      ordemServico: widget.controle!.ordemServicoEmEdicao,
+                      callback: callback,
+                      ordemBloqueada: ordemBloqueada,
+                    ),
+                  )))
+                else
+                  (Screenshot(
+                    controller: screenshotController,
+                    child: VetorSUV(
+                      ordemServico: widget.controle!.ordemServicoEmEdicao,
+                      callback: callback,
+                      ordemBloqueada: ordemBloqueada,
+                    ),
+                  )),
                 const SizedBox(height: 10),
                 CustomTextField(
                   label: "Problema constado",

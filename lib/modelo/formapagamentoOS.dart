@@ -6,19 +6,19 @@ class FormaPagamentoOrdemServico {
   OrdemServico _ordemServico = OrdemServico();
   FormaPagamento _forma = FormaPagamento();
   double _valorPago = 0;
-  int get id => this._id;
+  int get id => _id;
 
-  set id(int value) => this._id = value;
+  set id(int value) => _id = value;
 
-  get ordemServico => this._ordemServico;
+  get ordemServico => _ordemServico;
 
-  set ordemServico(value) => this._ordemServico = value;
+  set ordemServico(value) => _ordemServico = value;
 
-  get forma => this._forma;
+  get forma => _forma;
 
-  set forma(value) => this._forma = value;
+  set forma(value) => _forma = value;
 
-  get valorPago => this._valorPago;
+  get valorPago => _valorPago;
 
-  set valorPago(value) => this._valorPago = value;
+  set valorPago(value) => _valorPago = value;
 }

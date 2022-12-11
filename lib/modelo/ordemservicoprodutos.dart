@@ -12,41 +12,41 @@ class OrdemServicoProdutos {
   double _precoTotalPrazo = 0.0;
   double _precoTotalVista = 0.0;
 
-  int get id => this._id;
+  int get id => _id;
 
-  set id(int value) => this._id = value;
+  set id(int value) => _id = value;
 
-  get produtoServico => this._produtoServico;
+  get produtoServico => _produtoServico;
 
-  set produtoServico(value) => this._produtoServico = value;
+  set produtoServico(value) => _produtoServico = value;
 
-  get ordemServico => this._ordemServico;
+  get ordemServico => _ordemServico;
 
-  set ordemServico(value) => this._ordemServico = value;
+  set ordemServico(value) => _ordemServico = value;
 
-  get qtd => this._qtd;
+  get qtd => _qtd;
 
-  set qtd(value) => this._qtd = value;
+  set qtd(value) => _qtd = value;
 
-  get custoProdutos => this._custoProdutos;
+  get custoProdutos => _custoProdutos;
 
-  set custoProdutos(value) => this._custoProdutos = value;
+  set custoProdutos(value) => _custoProdutos = value;
 
-  get custoMaoObra => this._custoMaoObra;
+  get custoMaoObra => _custoMaoObra;
 
-  set custoMaoObra(value) => this._custoMaoObra = value;
+  set custoMaoObra(value) => _custoMaoObra = value;
 
-  get desconto => this._desconto;
+  get desconto => _desconto;
 
-  set desconto(value) => this._desconto = value;
+  set desconto(value) => _desconto = value;
 
-  double get precoTotalPrazo => this._precoTotalPrazo;
+  double get precoTotalPrazo => _precoTotalPrazo;
 
-  set precoTotalPrazo(double value) => this._precoTotalPrazo = value;
+  set precoTotalPrazo(double value) => _precoTotalPrazo = value;
 
-  get precoTotalVista => this._precoTotalVista;
+  get precoTotalVista => _precoTotalVista;
 
-  set precoTotalVista(value) => this._precoTotalVista = value;
+  set precoTotalVista(value) => _precoTotalVista = value;
 
   void calculoCusto() {
     if (produtoServico.tipoProduto == true) {

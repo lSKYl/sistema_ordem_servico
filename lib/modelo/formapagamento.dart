@@ -2,15 +2,15 @@ class FormaPagamento {
   int _id = 0;
   String? _nome = "";
   bool _registroAtivo = true;
-  int get id => this._id;
+  int get id => _id;
 
-  set id(int value) => this._id = value;
+  set id(int value) => _id = value;
 
-  get nome => this._nome;
+  get nome => _nome;
 
-  set nome(value) => this._nome = value;
+  set nome(value) => _nome = value;
 
-  get registroAtivo => this._registroAtivo;
+  get registroAtivo => _registroAtivo;
 
-  set registroAtivo(value) => this._registroAtivo = value;
+  set registroAtivo(value) => _registroAtivo = value;
 }

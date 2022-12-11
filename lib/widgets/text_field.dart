@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class TextFieldBorder extends StatelessWidget {
-  TextFieldBorder(
+  const TextFieldBorder(
       {super.key,
       this.label,
       this.controler,

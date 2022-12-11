@@ -10,58 +10,58 @@ abstract class Pessoa {
   String? _cidade = "";
   String? _uf = "";
   String? _cep = "";
-  get uf => this._uf;
+  get uf => _uf;
 
-  set uf(value) => this._uf = value;
+  set uf(value) => _uf = value;
 
-  get cep => this._cep;
+  get cep => _cep;
 
-  set cep(value) => this._cep = value;
-  String? get cidade => this._cidade;
+  set cep(value) => _cep = value;
+  String? get cidade => _cidade;
 
-  set cidade(String? value) => this._cidade = value;
+  set cidade(String? value) => _cidade = value;
   DateTime _dataCadastro = DateTime.now();
   String? _obs = "";
 
   bool _registroAtivo = true;
   List<Contato> _contatos = [];
-  get id => this._id;
+  get id => _id;
 
-  set id(value) => this._id = value;
+  set id(value) => _id = value;
 
-  get nome => this._nome;
+  get nome => _nome;
 
-  set nome(value) => this._nome = value;
+  set nome(value) => _nome = value;
 
-  get cpf => this._cpf;
+  get cpf => _cpf;
 
-  set cpf(value) => this._cpf = value;
+  set cpf(value) => _cpf = value;
 
-  get nomeFantasia => this._nomeFantasia;
+  get nomeFantasia => _nomeFantasia;
 
-  set nomeFantasia(value) => this._nomeFantasia = value;
+  set nomeFantasia(value) => _nomeFantasia = value;
 
-  get endereco => this._endereco;
+  get endereco => _endereco;
 
-  set endereco(value) => this._endereco = value;
+  set endereco(value) => _endereco = value;
 
-  get bairro => this._bairro;
+  get bairro => _bairro;
 
-  set bairro(value) => this._bairro = value;
+  set bairro(value) => _bairro = value;
 
-  get dataCadastro => this._dataCadastro;
+  get dataCadastro => _dataCadastro;
 
-  set dataCadastro(value) => this._dataCadastro = value;
+  set dataCadastro(value) => _dataCadastro = value;
 
-  get obs => this._obs;
+  get obs => _obs;
 
-  set obs(value) => this._obs = value;
+  set obs(value) => _obs = value;
 
-  get registroAtivo => this._registroAtivo;
+  get registroAtivo => _registroAtivo;
 
-  set registroAtivo(value) => this._registroAtivo = value;
+  set registroAtivo(value) => _registroAtivo = value;
 
-  List<Contato> get contatos => this._contatos;
+  List<Contato> get contatos => _contatos;
 
-  set contatos(List<Contato> value) => this._contatos = value;
+  set contatos(List<Contato> value) => _contatos = value;
 }
