@@ -37,6 +37,19 @@ class FormaPagamentoDAO {
     }
   }
 
+  Future<void> ativar(FormaPagamento formaPagamento) async {
+    try {
+      (await getConexaoPostgre()).transaction((ctx) async {
+        await ctx.query(
+            "update formapagamento set registroativo = true where id = @id",
+            substitutionValues: {"id": formaPagamento.id});
+      });
+    } catch (e) {
+      print('ERROR');
+      print(e.toString());
+    }
+  }
+
   Future<FormaPagamento> carregarObetoPorId(int id) async {
     List<Map<String, Map<String, dynamic>>> results =
         await (await getConexaoPostgre()).mappedResultsQuery(
@@ -55,13 +68,32 @@ class FormaPagamentoDAO {
     List<FormaPagamento> formas = [];
     List<Map<String, Map<String, dynamic>>> results =
         await (await getConexaoPostgre()).mappedResultsQuery(
-            """SELECT id, nome from formapagamento where registroativo = true and lower(nome) like @filtro order by lower(nome)""",
+            """SELECT id, nome, registroativo from formapagamento where registroativo = true and lower(nome) like @filtro order by lower(nome)""",
             substitutionValues: {"filtro": "%$filtro%"});
 
     for (final row in results) {
       FormaPagamento forma = FormaPagamento();
       forma.id = row["formapagamento"]?["id"];
       forma.nome = row["formapagamento"]?["nome"];
+      forma.registroAtivo = row["formapagamento"]?["registroativo"];
+      formas.add(forma);
+    }
+    return formas;
+  }
+
+  Future<List<FormaPagamento>> pesquisarDesativados(
+      {String filtro = ""}) async {
+    List<FormaPagamento> formas = [];
+    List<Map<String, Map<String, dynamic>>> results =
+        await (await getConexaoPostgre()).mappedResultsQuery(
+            """SELECT id, nome, registroativo from formapagamento where registroativo = false and lower(nome) like @filtro order by lower(nome)""",
+            substitutionValues: {"filtro": "%$filtro%"});
+
+    for (final row in results) {
+      FormaPagamento forma = FormaPagamento();
+      forma.id = row["formapagamento"]?["id"];
+      forma.nome = row["formapagamento"]?["nome"];
+      forma.registroAtivo = row["formapagamento"]?["registroativo"];
       formas.add(forma);
     }
     return formas;

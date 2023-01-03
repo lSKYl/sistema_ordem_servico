@@ -605,7 +605,7 @@ inner join pessoa as cliente ON cliente.id = ordem.pessoa_id
 inner join funcionario as func on func.id = ordem.funcionario_id
 inner join carro as carro on carro.id = ordem.carro_id
 inner join marcaveiculo as marca on marca.id = carro.marcaveiculo_id
-where ordem.registroativo = true and lower(cliente.nome) like @filtro order by lower(cliente.nome)""",
+where ordem.registroativo = true and lower(cliente.nome) like @filtro or ordem.registroativo = true and lower(carro.modelo) like @filtro or ordem.registroativo = true and lower(carro.placa) like @filtro or ordem.registroativo = true and lower(cliente.cpf) like @filtro or ordem.registroativo = true and lower(cliente.nomefantasia) like @filtro or ordem.registroativo = true and lower(cliente.cnpj) like @filtro""",
               substitutionValues: {"filtro": "%$filtro%"});
 
       for (final row in results) {

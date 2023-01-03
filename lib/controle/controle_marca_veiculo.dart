@@ -11,6 +11,10 @@ class ControleMarcaVeiculo {
     marcasPesquisadas = dao.pesquisar(filtro: filtropesquisa);
   }
 
+  Future<void> pesquisarMarcasDesativadas({String filtropesquisa = ""}) async {
+    marcasPesquisadas = dao.pesquisarDesativado(filtro: filtropesquisa);
+  }
+
   Future<MarcaVeiculo> carregarMarca(MarcaVeiculo marca) async {
     return dao.carregarObjetoPorId(marca.id);
   }
@@ -21,5 +25,9 @@ class ControleMarcaVeiculo {
 
   Future<void> excluirMarcaEmEdicao() async {
     dao.excluir(marcaEmEdicao);
+  }
+
+  Future<void> ativar() async {
+    dao.ativar(marcaEmEdicao);
   }
 }

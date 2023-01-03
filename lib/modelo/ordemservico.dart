@@ -144,8 +144,6 @@ class OrdemServico {
     calcularCusto(produtos);
     calcularMaoDeObra(produtos);
     calcularProduto(produtos);
-
-    print(valorTotalVista);
   }
 
   void calcularPrazo() {
@@ -172,7 +170,6 @@ class OrdemServico {
 
     ordemservicoprodutos.remove(produtos);
     calcularPrazo();
-    print(valorTotalVista);
   }
 
   void calcularMaoDeObra(OrdemServicoProdutos produtos) {

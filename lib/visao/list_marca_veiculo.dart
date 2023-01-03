@@ -19,6 +19,8 @@ class _ListMarcaVeiculoState extends State<ListMarcaVeiculo> {
       TextEditingController();
   Icon customIcon = const Icon(Icons.search);
   Widget customSearchBar = const Text('Lista de Marcas de Veiculos');
+  bool marcasAtivas = true;
+  bool marcasDesativadas = false;
 
   @override
   void initState() {
@@ -30,8 +32,11 @@ class _ListMarcaVeiculoState extends State<ListMarcaVeiculo> {
 
   Widget _listaMarca(MarcaVeiculo marca, int indice) {
     return CustomListTile(
+      registro: marca.registroAtivo,
       object: marca,
+      color: marca.registroAtivo ? Colors.white : Colors.red[900],
       textoExcluir: "Deseja realmente excluir está marca ?",
+      textoAtivar: "Deseja realmente ativar está marca ?",
       index: indice + 1,
       title: Text(
         marca.nome!,
@@ -64,6 +69,17 @@ class _ListMarcaVeiculoState extends State<ListMarcaVeiculo> {
           });
         });
       },
+      button3: () {
+        _controle.carregarMarca(marca).then((value) {
+          _controle.marcaEmEdicao = value;
+          _controle.ativar().then((_) {
+            Navigator.of(context).pop();
+            setState(() {
+              _controle.marcas.remove(marca);
+            });
+          });
+        });
+      },
     );
   }
 
@@ -84,9 +100,15 @@ class _ListMarcaVeiculoState extends State<ListMarcaVeiculo> {
                       controller: _controladorCampoPesquisa,
                       onChanged: ((text) {
                         setState(() {
-                          _controle.pesquisarMarcas(
-                              filtropesquisa:
-                                  _controladorCampoPesquisa.text.toLowerCase());
+                          if (marcasAtivas) {
+                            _controle.pesquisarMarcas(
+                                filtropesquisa: _controladorCampoPesquisa.text
+                                    .toLowerCase());
+                          } else if (marcasDesativadas) {
+                            _controle.pesquisarMarcasDesativadas(
+                                filtropesquisa: _controladorCampoPesquisa.text
+                                    .toLowerCase());
+                          }
                         });
                       }),
                       hint: 'Digite a marca que deseja pesquisar...',
@@ -135,25 +157,59 @@ class _ListMarcaVeiculoState extends State<ListMarcaVeiculo> {
         label: const Text('Adicionar'),
         icon: const Icon(Icons.add),
       ),
-      body: FutureBuilder(
-          future: _controle.marcasPesquisadas,
-          builder: (BuildContext context, AsyncSnapshot<List> snapshot) {
-            if (snapshot.hasError) {
-              return Text("${snapshot.error}");
-            }
-            if (snapshot.hasData) {
-              _controle.marcas = snapshot.data as List<MarcaVeiculo>;
+      body: Column(
+        children: [
+          Card(
+            child: Row(
+              children: [
+                Radio(
+                    value: true,
+                    groupValue: marcasAtivas,
+                    onChanged: (_) {
+                      setState(() {
+                        marcasAtivas = true;
+                        marcasDesativadas = false;
+                        _controle.pesquisarMarcas();
+                      });
+                    }),
+                const Text("Marcas ativas"),
+                Radio(
+                    value: true,
+                    groupValue: marcasDesativadas,
+                    onChanged: (_) {
+                      setState(() {
+                        marcasAtivas = false;
+                        marcasDesativadas = true;
+                        _controle.pesquisarMarcasDesativadas();
+                      });
+                    }),
+                const Text("Marcas desativadas")
+              ],
+            ),
+          ),
+          Expanded(
+            child: FutureBuilder(
+                future: _controle.marcasPesquisadas,
+                builder: (BuildContext context, AsyncSnapshot<List> snapshot) {
+                  if (snapshot.hasError) {
+                    return Text("${snapshot.error}");
+                  }
+                  if (snapshot.hasData) {
+                    _controle.marcas = snapshot.data as List<MarcaVeiculo>;
 
-              return ListView.builder(
-                  itemCount: _controle.marcas.length,
-                  itemBuilder: ((context, index) {
-                    return _listaMarca(_controle.marcas[index], index);
-                  }));
-            }
-            return const Center(
-              child: Text('Carregando dados'),
-            );
-          }),
+                    return ListView.builder(
+                        itemCount: _controle.marcas.length,
+                        itemBuilder: ((context, index) {
+                          return _listaMarca(_controle.marcas[index], index);
+                        }));
+                  }
+                  return const Center(
+                    child: Text('Carregando dados'),
+                  );
+                }),
+          ),
+        ],
+      ),
     );
   }
 }

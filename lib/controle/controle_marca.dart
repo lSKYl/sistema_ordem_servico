@@ -22,4 +22,12 @@ class ControleMarca {
   Future<void> excluirMarcaEmEdicao() async {
     dao.excluir(marcaEmEdicao);
   }
+
+  Future<void> ativar() async {
+    dao.ativar(marcaEmEdicao);
+  }
+
+  Future<void> pesquisarDesativadas({String filtroPesquisa = ""}) async {
+    marcasPesquisadas = dao.pesquisarDesativados(filtro: filtroPesquisa);
+  }
 }

@@ -11,6 +11,10 @@ class ControleFormaPagamento {
     formasPesquisadas = dao.pesquisar(filtro: filtroPesquisa);
   }
 
+  Future<void> pesquisarFormasDesativadas({String filtroPesquisa = ""}) async {
+    formasPesquisadas = dao.pesquisarDesativados(filtro: filtroPesquisa);
+  }
+
   Future<FormaPagamento> carregarForma(FormaPagamento forma) async {
     return dao.carregarObetoPorId(forma.id);
   }
@@ -21,5 +25,9 @@ class ControleFormaPagamento {
 
   Future<void> excluirFormaEmEdicao() async {
     dao.excluir(formaEmEdicao);
+  }
+
+  Future<void> ativarFormaEmEdicao() async {
+    dao.ativar(formaEmEdicao);
   }
 }

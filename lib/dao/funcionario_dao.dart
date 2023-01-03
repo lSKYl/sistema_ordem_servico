@@ -65,6 +65,19 @@ class FuncionarioDAO {
     }
   }
 
+  Future<void> ativar(Funcionario funcionario) async {
+    try {
+      (await getConexaoPostgre()).transaction((ctx) async {
+        await ctx.query(
+            "update funcionario set registroativo = true where id = @id",
+            substitutionValues: {"id": funcionario.id, "registroativo": false});
+      });
+    } catch (e) {
+      print("Error");
+      print(e.toString());
+    }
+  }
+
   Future<Funcionario> carregarObjetoPorId(int id) async {
     List<Map<String, Map<String, dynamic>>> results =
         await (await getConexaoPostgre()).mappedResultsQuery(
@@ -101,7 +114,7 @@ class FuncionarioDAO {
     try {
       List<Map<String, Map<String, dynamic>>> results =
           await (await getConexaoPostgre()).mappedResultsQuery(
-              """SELECT id, nome, funcao from funcionario where registroativo = true and lower(nome) like @filtro order by lower(nome)""",
+              """SELECT id, nome, funcao, registroativo from funcionario where registroativo = true and lower(nome) like @filtro order by lower(nome)""",
               substitutionValues: {"filtro": "%$filtro%"});
 
       for (final row in results) {
@@ -109,6 +122,31 @@ class FuncionarioDAO {
         funcionario.id = row["funcionario"]?["id"];
         funcionario.nome = row["funcionario"]?["nome"];
         funcionario.funcao = row["funcionario"]?["funcao"];
+        funcionario.registroAtivo = row["funcionario"]?["registroativo"];
+        funcionarios.add(funcionario);
+      }
+    } catch (e) {
+      print('error');
+      print(e.toString());
+    }
+    return funcionarios;
+  }
+
+  Future<List<Funcionario>> pesquisarFuncionarioDesativado(
+      {String filtro = ""}) async {
+    List<Funcionario> funcionarios = [];
+    try {
+      List<Map<String, Map<String, dynamic>>> results =
+          await (await getConexaoPostgre()).mappedResultsQuery(
+              """SELECT id, nome, funcao, registroativo from funcionario where registroativo = false and lower(nome) like @filtro order by lower(nome)""",
+              substitutionValues: {"filtro": "%$filtro%"});
+
+      for (final row in results) {
+        Funcionario funcionario = Funcionario();
+        funcionario.id = row["funcionario"]?["id"];
+        funcionario.nome = row["funcionario"]?["nome"];
+        funcionario.funcao = row["funcionario"]?["funcao"];
+        funcionario.registroAtivo = row["funcionario"]?["registroativo"];
         funcionarios.add(funcionario);
       }
     } catch (e) {

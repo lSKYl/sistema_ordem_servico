@@ -18,6 +18,8 @@ class _ListaVeiculoState extends State<ListaVeiculo> {
       TextEditingController();
   Icon customIcon = const Icon(Icons.search);
   Widget customSearchBar = const Text('Lista de Veiculos');
+  bool veiculosAtivos = true;
+  bool veiculosDestivados = false;
   @override
   void initState() {
     super.initState();
@@ -28,17 +30,21 @@ class _ListaVeiculoState extends State<ListaVeiculo> {
 
   Widget _listaVeiculo(Veiculo veiculo, int indice) {
     return CustomListTile(
+      registro: veiculo.registroAtivo,
+      color:
+          veiculo.registroAtivo ? Colors.white : Color.fromARGB(255, 136, 1, 1),
       object: veiculo,
-      textoExcluir: "Deseja realmente excluir esse veiculo ?",
+      textoExcluir: "Deseja realmente excluir esse veículo ?",
+      textoAtivar: "Deseja realmente ativar esse veículo",
       index: indice + 1,
       title: Text('${veiculo.modelo} ${veiculo.marca.nome} ${veiculo.placa}'),
       subtitle: Row(children: [
         if (veiculo.cliente.nome == '') ...[
           Text(veiculo.cliente.nomeFantasia!),
-          Text(veiculo.cliente.cnpj!)
+          Text(' CNPJ: ${veiculo.cliente.cnpj!}')
         ] else ...[
           Text(veiculo.cliente.nome!),
-          Text(veiculo.cliente.cpf!)
+          Text(' CPF: ${veiculo.cliente.cpf!}')
         ]
       ]),
       button1: () {
@@ -68,6 +74,17 @@ class _ListaVeiculoState extends State<ListaVeiculo> {
           });
         });
       },
+      button3: () {
+        _controle.carregarVeiculo(veiculo).then((value) {
+          _controle.veiculoEmEdicao = value;
+          _controle.ativarVeiculo().then((_) {
+            Navigator.of(context).pop();
+            setState(() {
+              _controle.veiculos.remove(veiculo);
+            });
+          });
+        });
+      },
     );
   }
 
@@ -88,9 +105,15 @@ class _ListaVeiculoState extends State<ListaVeiculo> {
                       controller: _controladorCampoPesquisa,
                       onChanged: ((text) {
                         setState(() {
-                          _controle.pesquisarVeiculo(
-                              filtro:
-                                  _controladorCampoPesquisa.text.toLowerCase());
+                          if (veiculosAtivos) {
+                            _controle.pesquisarVeiculo(
+                                filtro: _controladorCampoPesquisa.text
+                                    .toLowerCase());
+                          } else if (veiculosDestivados) {
+                            _controle.pesquisarVeiculoDesativado(
+                                filtro: _controladorCampoPesquisa.text
+                                    .toLowerCase());
+                          }
                         });
                       }),
                       hint:
@@ -140,25 +163,60 @@ class _ListaVeiculoState extends State<ListaVeiculo> {
         label: const Text('Adicionar'),
         icon: const Icon(Icons.add),
       ),
-      body: FutureBuilder(
-          future: _controle.veiculosLista,
-          builder: (context, snapshot) {
-            if (snapshot.hasError) {
-              return new Text("${snapshot.error}");
-            }
-            if (snapshot.hasData) {
-              _controle.veiculos = snapshot.data as List<Veiculo>;
+      body: Column(
+        children: [
+          Card(
+            child: Row(
+              children: [
+                Radio(
+                    value: true,
+                    groupValue: veiculosAtivos,
+                    onChanged: (_) {
+                      setState(() {
+                        veiculosAtivos = true;
+                        veiculosDestivados = false;
+                        _controle.pesquisarVeiculo();
+                      });
+                    }),
+                const Text("Veículos ativos"),
+                Radio(
+                    value: true,
+                    groupValue: veiculosDestivados,
+                    onChanged: (_) {
+                      setState(() {
+                        veiculosAtivos = false;
+                        veiculosDestivados = true;
+                        _controle.pesquisarVeiculoDesativado();
+                      });
+                    }),
+                const Text("Veículos desativados")
+              ],
+            ),
+          ),
+          Expanded(
+            child: FutureBuilder(
+                future: _controle.veiculosLista,
+                builder: (context, snapshot) {
+                  if (snapshot.hasError) {
+                    return new Text("${snapshot.error}");
+                  }
+                  if (snapshot.hasData) {
+                    _controle.veiculos = snapshot.data as List<Veiculo>;
 
-              return ListView.builder(
-                  itemCount: _controle.veiculos.length,
-                  itemBuilder: ((context, index) {
-                    return _listaVeiculo(_controle.veiculos[index], index);
-                  }));
-            }
-            return const Center(
-              child: Text('Carregando Dados'),
-            );
-          }),
+                    return ListView.builder(
+                        itemCount: _controle.veiculos.length,
+                        itemBuilder: ((context, index) {
+                          return _listaVeiculo(
+                              _controle.veiculos[index], index);
+                        }));
+                  }
+                  return const Center(
+                    child: Text('Carregando Dados'),
+                  );
+                }),
+          ),
+        ],
+      ),
     );
   }
 }

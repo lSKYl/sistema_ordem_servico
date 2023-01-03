@@ -24,4 +24,21 @@ class ControlePessoa {
   Future<void> excluirCliente() async {
     dao.excluir(clienteEmEdicao);
   }
+
+  Future<void> ativarCliente() async {
+    dao.ativar(clienteEmEdicao);
+  }
+
+  Future<void> pesquisarClientesFisicos({String filtroPesquisa = ""}) async {
+    clientesPesquisados = dao.pesquisarClienteFisico(filtro: filtroPesquisa);
+  }
+
+  Future<void> pesquisarClientesJuridicos({String filtroPesquisa = ""}) async {
+    clientesPesquisados = dao.pesquisarClienteJuridico(filtro: filtroPesquisa);
+  }
+
+  Future<void> pesquisarClientesDesativado({String filtroPesquisa = ""}) async {
+    clientesPesquisados =
+        dao.pesquisarClienteDesativado(filtro: filtroPesquisa);
+  }
 }

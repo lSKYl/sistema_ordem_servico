@@ -20,6 +20,8 @@ class _ListMarcaState extends State<ListMarca> {
       TextEditingController();
   Icon customIcon = const Icon(Icons.search);
   Widget customSearchBar = const Text('Lista de Marcas');
+  bool marcasAtivas = true;
+  bool marcasDesativadas = false;
 
   @override
   void initState() {
@@ -31,9 +33,13 @@ class _ListMarcaState extends State<ListMarca> {
 
   Widget _listaMarca(Marca marca, int indice) {
     return CustomListTile(
+      registro: marca.registroAtivo,
+      color:
+          marca.registroAtivo ? Colors.white : Color.fromARGB(255, 136, 1, 1),
       object: marca,
       index: indice + 1,
       textoExcluir: "Deseja realmente excluir está marca ?",
+      textoAtivar: "Deseja realmente ativar está marca ?",
       title: Text(
         marca.nome,
         style: TextStyle(fontWeight: FontWeight.bold),
@@ -67,6 +73,19 @@ class _ListMarcaState extends State<ListMarca> {
           },
         );
       },
+      button3: () {
+        _controle.carregarMarca(marca).then(
+          (value) {
+            _controle.marcaEmEdicao = value;
+            _controle.ativar().then((_) {
+              Navigator.of(context).pop();
+              setState(() {
+                _controle.marcas.remove(marca);
+              });
+            });
+          },
+        );
+      },
     );
   }
 
@@ -87,9 +106,15 @@ class _ListMarcaState extends State<ListMarca> {
                         controller: _controladorCampoPesquisa,
                         onChanged: (text) {
                           setState(() {
-                            _controle.pesquisarMarcas(
-                                filtroPesquisa: _controladorCampoPesquisa.text
-                                    .toLowerCase());
+                            if (marcasAtivas) {
+                              _controle.pesquisarMarcas(
+                                  filtroPesquisa: _controladorCampoPesquisa.text
+                                      .toLowerCase());
+                            } else if (marcasDesativadas) {
+                              _controle.pesquisarDesativadas(
+                                  filtroPesquisa: _controladorCampoPesquisa.text
+                                      .toLowerCase());
+                            }
                           });
                         },
                         hint: 'Digite a marca que deseja pesquisar...',
@@ -138,22 +163,54 @@ class _ListMarcaState extends State<ListMarca> {
           icon: const Icon(Icons.add),
           label: const Text('Adicionar'),
         ),
-        body: FutureBuilder(
-            future: _controle.marcasPesquisadas,
-            builder: (BuildContext context, AsyncSnapshot<List> snapshot) {
-              if (snapshot.hasError) {
-                return Text("${snapshot.error}");
-              }
-              if (snapshot.hasData) {
-                _controle.marcas = snapshot.data as List<Marca>;
-
-                return ListView.builder(
-                    itemCount: _controle.marcas.length,
-                    itemBuilder: (BuildContext context, int index) {
-                      return _listaMarca(_controle.marcas[index], index);
+        body: Column(
+          children: [
+            Card(
+                child: Row(children: [
+              Radio(
+                  value: true,
+                  groupValue: marcasAtivas,
+                  onChanged: (_) {
+                    setState(() {
+                      marcasAtivas = true;
+                      marcasDesativadas = false;
+                      _controle.pesquisarMarcas();
                     });
-              }
-              return const Center(child: Text('Carregando dados'));
-            }));
+                  }),
+              const Text("Marcas ativas"),
+              Radio(
+                  value: true,
+                  groupValue: marcasDesativadas,
+                  onChanged: (_) {
+                    setState(() {
+                      marcasAtivas = false;
+                      marcasDesativadas = true;
+                      _controle.pesquisarDesativadas();
+                    });
+                  }),
+              const Text("Marcas desativadas")
+            ])),
+            Expanded(
+              child: FutureBuilder(
+                  future: _controle.marcasPesquisadas,
+                  builder:
+                      (BuildContext context, AsyncSnapshot<List> snapshot) {
+                    if (snapshot.hasError) {
+                      return Text("${snapshot.error}");
+                    }
+                    if (snapshot.hasData) {
+                      _controle.marcas = snapshot.data as List<Marca>;
+
+                      return ListView.builder(
+                          itemCount: _controle.marcas.length,
+                          itemBuilder: (BuildContext context, int index) {
+                            return _listaMarca(_controle.marcas[index], index);
+                          });
+                    }
+                    return const Center(child: Text('Carregando dados'));
+                  }),
+            ),
+          ],
+        ));
   }
 }

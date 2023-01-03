@@ -18,6 +18,10 @@ class _ListProdutoState extends State<ListProduto> {
       TextEditingController();
   Icon customIcon = const Icon(Icons.search);
   Widget customSearchBar = const Text('Lista de Produtos e Serviços');
+  bool produtosAtivados = true;
+  bool produtosDesativados = false;
+  bool produtos = false;
+  bool servicos = false;
 
   @override
   void initState() {
@@ -29,7 +33,9 @@ class _ListProdutoState extends State<ListProduto> {
 
   Widget _listaProduto(ProdutoServico produto, int indice) {
     return CustomListTile(
-      color: produto.registroAtivo == true ? Colors.white : Colors.red,
+      registro: produto.registroAtivo,
+      textoAtivar: 'Deseja ativar este produto ?',
+      color: produto.registroAtivo == true ? Colors.white : Colors.red[900],
       object: produto,
       textoExcluir: "Deseja excluir este produto ?",
       index: indice + 1,
@@ -75,6 +81,19 @@ class _ListProdutoState extends State<ListProduto> {
           },
         );
       },
+      button3: () {
+        _controle.carregarProduto(produto).then(
+          (value) {
+            _controle.produtoServicoEmEdicao = value;
+            _controle.ativarProduto().then((_) {
+              Navigator.of(context).pop();
+              setState(() {
+                _controle.produtos.remove(produto);
+              });
+            });
+          },
+        );
+      },
     );
   }
 
@@ -94,9 +113,23 @@ class _ListProdutoState extends State<ListProduto> {
                       controller: _controladorCampoPesquisa,
                       onChanged: (text) {
                         setState(() {
-                          _controle.pesquisarProduto(
-                              filtroPesquisa:
-                                  _controladorCampoPesquisa.text.toLowerCase());
+                          if (produtosAtivados) {
+                            _controle.pesquisarProduto(
+                                filtroPesquisa: _controladorCampoPesquisa.text
+                                    .toLowerCase());
+                          } else if (produtos) {
+                            _controle.pesquisarProdutos(
+                                filtroPesquisa: _controladorCampoPesquisa.text
+                                    .toLowerCase());
+                          } else if (servicos) {
+                            _controle.pesquisarServicos(
+                                filtroPesquisa: _controladorCampoPesquisa.text
+                                    .toLowerCase());
+                          } else if (produtosDesativados) {
+                            _controle.pesquisarProdutoDesativados(
+                                filtroPesquisa: _controladorCampoPesquisa.text
+                                    .toLowerCase());
+                          }
                         });
                       },
                       hint:
@@ -147,26 +180,88 @@ class _ListProdutoState extends State<ListProduto> {
         label: const Text('Adicionar'),
         icon: const Icon(Icons.add),
       ),
-      body: FutureBuilder(
-        future: _controle.produtosLista,
-        builder: (BuildContext context, AsyncSnapshot<List> snapshot) {
-          if (snapshot.hasError) {
-            return Text("${snapshot.error}");
-          }
-          if (snapshot.hasData) {
-            _controle.produtos = snapshot.data as List<ProdutoServico>;
+      body: Column(
+        children: [
+          Card(
+            child: Row(children: [
+              Radio(
+                  value: true,
+                  groupValue: produtosAtivados,
+                  onChanged: (_) {
+                    setState(() {
+                      produtosAtivados = true;
+                      produtos = false;
+                      servicos = false;
+                      produtosDesativados = false;
+                      _controle.pesquisarProduto();
+                    });
+                  }),
+              const Text("Produtos e Serviços ativos"),
+              Radio(
+                  value: true,
+                  groupValue: produtos,
+                  onChanged: (_) {
+                    setState(() {
+                      produtosAtivados = false;
+                      produtos = true;
+                      servicos = false;
+                      produtosDesativados = false;
+                      _controle.pesquisarProdutos();
+                    });
+                  }),
+              const Text("Produtos"),
+              Radio(
+                  value: true,
+                  groupValue: servicos,
+                  onChanged: (_) {
+                    setState(() {
+                      produtosAtivados = false;
+                      produtos = false;
+                      servicos = true;
+                      produtosDesativados = false;
+                      _controle.pesquisarServicos();
+                    });
+                  }),
+              const Text("Serviços"),
+              Radio(
+                  value: true,
+                  groupValue: produtosDesativados,
+                  onChanged: (_) {
+                    setState(() {
+                      produtosAtivados = false;
+                      produtos = false;
+                      servicos = false;
+                      produtosDesativados = true;
+                      _controle.pesquisarProdutoDesativados();
+                    });
+                  }),
+              const Text("Produtos e Serviços desativados")
+            ]),
+          ),
+          Expanded(
+            child: FutureBuilder(
+              future: _controle.produtosLista,
+              builder: (BuildContext context, AsyncSnapshot<List> snapshot) {
+                if (snapshot.hasError) {
+                  return Text("${snapshot.error}");
+                }
+                if (snapshot.hasData) {
+                  _controle.produtos = snapshot.data as List<ProdutoServico>;
 
-            return ListView.builder(
-              itemCount: _controle.produtos.length,
-              itemBuilder: (BuildContext context, int index) {
-                return _listaProduto(_controle.produtos[index], index);
+                  return ListView.builder(
+                    itemCount: _controle.produtos.length,
+                    itemBuilder: (BuildContext context, int index) {
+                      return _listaProduto(_controle.produtos[index], index);
+                    },
+                  );
+                }
+                return const Center(
+                  child: Text('Carregando dados'),
+                );
               },
-            );
-          }
-          return const Center(
-            child: Text('Carregando dados'),
-          );
-        },
+            ),
+          ),
+        ],
       ),
     );
   }

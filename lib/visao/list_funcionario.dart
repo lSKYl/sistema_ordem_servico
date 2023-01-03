@@ -20,6 +20,8 @@ class _ListFuncionarioState extends State<ListFuncionario> {
       TextEditingController();
   Icon customIcon = const Icon(Icons.search);
   Widget customSearchBar = const Text('Lista de Funcionarios');
+  bool funcionariosAtivos = true;
+  bool funcionariosDesativados = false;
 
   @override
   void initState() {
@@ -31,8 +33,13 @@ class _ListFuncionarioState extends State<ListFuncionario> {
 
   Widget _listaFuncionario(Funcionario funcionario, int indice) {
     return CustomListTile(
+      registro: funcionario.registroAtivo,
+      color: funcionario.registroAtivo
+          ? Colors.white
+          : Color.fromARGB(255, 136, 1, 1),
       object: funcionario,
       textoExcluir: "Deseja realmente excluir este funcionário ?",
+      textoAtivar: "Deseja realmente ativar este funcionário ?",
       index: indice + 1,
       title: Text(
         funcionario.nome!,
@@ -62,6 +69,17 @@ class _ListFuncionarioState extends State<ListFuncionario> {
         _controle.carregarFuncionario(funcionario).then((value) {
           _controle.funcionarioEmEdicao = value;
           _controle.excluirFuncionario().then((_) {
+            Navigator.of(context).pop();
+            setState(() {
+              _controle.funcionarios.remove(funcionario);
+            });
+          });
+        });
+      },
+      button3: () {
+        _controle.carregarFuncionario(funcionario).then((value) {
+          _controle.funcionarioEmEdicao = value;
+          _controle.ativarFuncionario().then((_) {
             Navigator.of(context).pop();
             setState(() {
               _controle.funcionarios.remove(funcionario);
@@ -107,9 +125,15 @@ class _ListFuncionarioState extends State<ListFuncionario> {
                       controller: _controladorCampoPesquisa,
                       onChanged: ((text) {
                         setState(() {
-                          _controle.pesquisarFuncionario(
-                              filtro:
-                                  _controladorCampoPesquisa.text.toLowerCase());
+                          if (funcionariosAtivos) {
+                            _controle.pesquisarFuncionario(
+                                filtro: _controladorCampoPesquisa.text
+                                    .toLowerCase());
+                          } else if (funcionariosDesativados) {
+                            _controle.pesquisarFuncionarioDesativado(
+                                filtro: _controladorCampoPesquisa.text
+                                    .toLowerCase());
+                          }
                         });
                       }),
                       hint: 'Digite o funcionário que deseja pesquisar...',
@@ -136,26 +160,60 @@ class _ListFuncionarioState extends State<ListFuncionario> {
               icon: const Icon(Icons.add))
         ],
       ),
-      body: FutureBuilder(
-        future: _controle.funcionariosPesquisados,
-        builder: (BuildContext context, AsyncSnapshot<List> snapshot) {
-          if (snapshot.hasError) {
-            return Text("${snapshot.error}");
-          }
-          if (snapshot.hasData) {
-            _controle.funcionarios = snapshot.data as List<Funcionario>;
+      body: Column(
+        children: [
+          Card(
+            child: Row(
+              children: [
+                Radio(
+                    value: true,
+                    groupValue: funcionariosAtivos,
+                    onChanged: (_) {
+                      setState(() {
+                        funcionariosAtivos = true;
+                        funcionariosDesativados = false;
+                        _controle.pesquisarFuncionario();
+                      });
+                    }),
+                const Text("Funcionários ativos"),
+                Radio(
+                    value: true,
+                    groupValue: funcionariosDesativados,
+                    onChanged: (_) {
+                      setState(() {
+                        funcionariosAtivos = false;
+                        funcionariosDesativados = true;
+                        _controle.pesquisarFuncionarioDesativado();
+                      });
+                    }),
+                const Text("Funcionários desativados")
+              ],
+            ),
+          ),
+          Expanded(
+            child: FutureBuilder(
+              future: _controle.funcionariosPesquisados,
+              builder: (BuildContext context, AsyncSnapshot<List> snapshot) {
+                if (snapshot.hasError) {
+                  return Text("${snapshot.error}");
+                }
+                if (snapshot.hasData) {
+                  _controle.funcionarios = snapshot.data as List<Funcionario>;
 
-            return ListView.builder(
-                itemCount: _controle.funcionarios.length,
-                itemBuilder: (BuildContext context, int index) {
-                  return _listaFuncionario(
-                      _controle.funcionarios[index], index);
-                });
-          }
-          return Center(
-            child: Text('Carregando dados'),
-          );
-        },
+                  return ListView.builder(
+                      itemCount: _controle.funcionarios.length,
+                      itemBuilder: (BuildContext context, int index) {
+                        return _listaFuncionario(
+                            _controle.funcionarios[index], index);
+                      });
+                }
+                return Center(
+                  child: Text('Carregando dados'),
+                );
+              },
+            ),
+          ),
+        ],
       ),
     );
   }

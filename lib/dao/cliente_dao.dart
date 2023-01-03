@@ -89,6 +89,18 @@ class ClienteDAO {
     }
   }
 
+  Future<void> ativar(Cliente cliente) async {
+    try {
+      (await getConexaoPostgre()).transaction((ctx) async {
+        await ctx.query("update pessoa set registroativo = true where id = @id",
+            substitutionValues: {"id": cliente.id});
+      });
+    } catch (e) {
+      print('error');
+      print(e.toString());
+    }
+  }
+
   Future<Cliente> carregarObjetoPorId(int id) async {
     List<Map<String, Map<String, dynamic>>> results =
         await (await getConexaoPostgre()).mappedResultsQuery(
@@ -133,7 +145,7 @@ class ClienteDAO {
     try {
       List<Map<String, Map<String, dynamic>>> results =
           await (await getConexaoPostgre()).mappedResultsQuery(
-              """SELECT id, nome, nomefantasia, cpf, cnpj from pessoa where registroativo = true and lower(nome) like @filtro or lower(nomefantasia) like @filtro order by lower(nome)""",
+              """SELECT id, nome, nomefantasia, cpf, cnpj, registroativo from pessoa where registroativo = true and lower(nome) like @filtro or registroativo = true and lower(nomefantasia) like @filtro or registroativo = true and lower(cpf) like @filtro or registroativo = true and lower(cnpj) like @filtro""",
               substitutionValues: {"filtro": "%$filtro%"});
 
       for (final row in results) {
@@ -143,6 +155,78 @@ class ClienteDAO {
         cliente.nomeFantasia = row["pessoa"]?["nomefantasia"];
         cliente.cpf = row["pessoa"]?["cpf"];
         cliente.cnpj = row["pessoa"]?["cnpj"];
+        cliente.registroAtivo = row["pessoa"]?["registroativo"];
+        clientes.add(cliente);
+      }
+    } catch (e) {
+      print('error');
+      print(e.toString());
+    }
+    return clientes;
+  }
+
+  Future<List<Cliente>> pesquisarClienteFisico({String filtro = ""}) async {
+    List<Cliente> clientes = [];
+    try {
+      List<Map<String, Map<String, dynamic>>> results =
+          await (await getConexaoPostgre()).mappedResultsQuery(
+              """SELECT id, nome, cpf, registroativo from pessoa where registroativo = true and lower(nome) like @filtro or registroativo = true and lower(cpf) like @filtro""",
+              substitutionValues: {"filtro": "%$filtro%"});
+
+      for (final row in results) {
+        Cliente cliente = Cliente();
+        cliente.id = row["pessoa"]?["id"];
+        cliente.nome = row["pessoa"]?["nome"];
+        cliente.cpf = row["pessoa"]?["cpf"];
+        cliente.registroAtivo = row["pessoa"]?["registroativo"];
+        clientes.add(cliente);
+      }
+    } catch (e) {
+      print('error');
+      print(e.toString());
+    }
+    return clientes;
+  }
+
+  Future<List<Cliente>> pesquisarClienteJuridico({String filtro = ""}) async {
+    List<Cliente> clientes = [];
+    try {
+      List<Map<String, Map<String, dynamic>>> results =
+          await (await getConexaoPostgre()).mappedResultsQuery(
+              """SELECT id, nomefantasia, cnpj, registroativo from pessoa where registroativo = true and cnpj != '' and lower(nomefantasia) like @filtro or registroativo = true and cnpj != '' and lower(cnpj) like @filtro""",
+              substitutionValues: {"filtro": "%$filtro%"});
+
+      for (final row in results) {
+        Cliente cliente = Cliente();
+        cliente.id = row["pessoa"]?["id"];
+        cliente.nome = row["pessoa"]?["nomefantasia"];
+        cliente.cpf = row["pessoa"]?["cnpj"];
+        cliente.registroAtivo = row["pessoa"]?["registroativo"];
+        clientes.add(cliente);
+      }
+    } catch (e) {
+      print('error');
+      print(e.toString());
+    }
+    return clientes;
+  }
+
+  Future<List<Cliente>> pesquisarClienteDesativado({String filtro = ""}) async {
+    List<Cliente> clientes = [];
+    try {
+      List<Map<String, Map<String, dynamic>>> results =
+          await (await getConexaoPostgre()).mappedResultsQuery(
+              """SELECT id, nome, nomefantasia, cpf, cnpj, registroativo from pessoa where registroativo = false and lower(nome) like @filtro or registroativo = false and lower(nomefantasia) like @filtro or registroativo = false and lower(cpf) like @filtro or registroativo = false and lower(cnpj) like @filtro""",
+              substitutionValues: {"filtro": "%$filtro%"});
+
+      for (final row in results) {
+        Cliente cliente = Cliente();
+        cliente.id = row["pessoa"]?["id"];
+        cliente.nome = row["pessoa"]?["nome"];
+        cliente.nomeFantasia = row["pessoa"]?["nomefantasia"];
+        cliente.cpf = row["pessoa"]?["cpf"];
+        cliente.cnpj = row["pessoa"]?["cnpj"];
+        cliente.registroAtivo = row["pessoa"]?["registroativo"];
         clientes.add(cliente);
       }
     } catch (e) {

@@ -20,7 +20,16 @@ class ControleFuncionario {
     dao.excluir(funcionarioEmEdicao);
   }
 
+  Future<void> ativarFuncionario() async {
+    dao.ativar(funcionarioEmEdicao);
+  }
+
   Future<void> pesquisarFuncionario({String filtro = ""}) async {
     funcionariosPesquisados = dao.pesquisarFuncionario(filtro: filtro);
+  }
+
+  Future<void> pesquisarFuncionarioDesativado({String filtro = ""}) async {
+    funcionariosPesquisados =
+        dao.pesquisarFuncionarioDesativado(filtro: filtro);
   }
 }

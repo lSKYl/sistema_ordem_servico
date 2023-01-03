@@ -43,8 +43,19 @@ class VeiculoDAO {
   Future<void> excluir(Veiculo veiculo) async {
     try {
       (await getConexaoPostgre()).transaction((ctx) async {
-        await ctx.query(
-            "update veiculo set registroativo = false where id = @id",
+        await ctx.query("update carro set registroativo = false where id = @id",
+            substitutionValues: {"id": veiculo.id});
+      });
+    } catch (e) {
+      print("ERROR");
+      print(e.toString());
+    }
+  }
+
+  Future<void> ativar(Veiculo veiculo) async {
+    try {
+      (await getConexaoPostgre()).transaction((ctx) async {
+        await ctx.query("update carro set registroativo = true where id = @id",
             substitutionValues: {"id": veiculo.id});
       });
     } catch (e) {
@@ -92,10 +103,10 @@ where veiculo.id = @id""",
     try {
       List<Map<String, Map<String, dynamic>>> results =
           await (await getConexaoPostgre()).mappedResultsQuery(
-              """select veiculo.id, veiculo.modelo, veiculo.placa, marca.nome, cliente.nome, cliente.nomefantasia, cliente.cpf, cliente.cnpj, pessoa_id, marcaveiculo_id from carro as veiculo
+              """select veiculo.id, veiculo.modelo, veiculo.placa, veiculo.registroativo, marca.nome, cliente.nome, cliente.nomefantasia, cliente.cpf, cliente.cnpj, pessoa_id, marcaveiculo_id from carro as veiculo
 inner join pessoa as cliente on cliente.id = veiculo.pessoa_id 
 inner join marcaveiculo as marca ON marca.id = veiculo.marcaveiculo_id
-where cliente.registroativo = true and lower(veiculo.modelo) like @filtro""",
+where cliente.registroativo = true and veiculo.registroativo = true and lower(veiculo.modelo) like @filtro or cliente.registroativo = true and veiculo.registroativo = true and lower(cliente.nome) like @filtro or cliente.registroativo = true and veiculo.registroativo = true and lower(cliente.nomefantasia) like @filtro or cliente.registroativo = true and veiculo.registroativo = true and lower(marca.nome) like @filtro""",
               substitutionValues: {"filtro": "%$filtro%"});
 
       for (final row in results) {
@@ -110,6 +121,41 @@ where cliente.registroativo = true and lower(veiculo.modelo) like @filtro""",
         veiculo.cliente.cpf = row["pessoa"]?["cpf"];
         veiculo.cliente.cnpj = row["pessoa"]?["cnpj"];
         veiculo.marca.nome = row["marcaveiculo"]?["nome"];
+        veiculo.registroAtivo = row["carro"]?["registroativo"];
+
+        veiculos.add(veiculo);
+      }
+    } catch (e) {
+      print("ERROR");
+      print(e.toString());
+    }
+    return veiculos;
+  }
+
+  Future<List<Veiculo>> pesquisarVeiculoDesativado({String filtro = ""}) async {
+    List<Veiculo> veiculos = [];
+    try {
+      List<Map<String, Map<String, dynamic>>> results =
+          await (await getConexaoPostgre()).mappedResultsQuery(
+              """select veiculo.id, veiculo.modelo, veiculo.placa, veiculo.registroativo, marca.nome, cliente.nome, cliente.nomefantasia, cliente.cpf, cliente.cnpj, pessoa_id, marcaveiculo_id from carro as veiculo
+inner join pessoa as cliente on cliente.id = veiculo.pessoa_id 
+inner join marcaveiculo as marca ON marca.id = veiculo.marcaveiculo_id
+where cliente.registroativo = true and veiculo.registroativo = false and lower(veiculo.modelo) like @filtro or cliente.registroativo = true and veiculo.registroativo = false and lower(cliente.nome) like @filtro or cliente.registroativo = true and veiculo.registroativo = false and lower(cliente.nomefantasia) like @filtro or cliente.registroativo = true and veiculo.registroativo = false and lower(marca.nome) like @filtro""",
+              substitutionValues: {"filtro": "%$filtro%"});
+
+      for (final row in results) {
+        Veiculo veiculo = Veiculo();
+        veiculo.id = row["carro"]?["id"];
+        veiculo.modelo = row["carro"]?["modelo"];
+        veiculo.placa = row["carro"]?["placa"];
+        veiculo.cliente.id = row["carro"]?["pessoa_id"];
+        veiculo.marca.id = row["carro"]?["marcaveiculo_id"];
+        veiculo.cliente.nome = row["pessoa"]?["nome"];
+        veiculo.cliente.nomeFantasia = row["pessoa"]?["nomefantasia"];
+        veiculo.cliente.cpf = row["pessoa"]?["cpf"];
+        veiculo.cliente.cnpj = row["pessoa"]?["cnpj"];
+        veiculo.marca.nome = row["marcaveiculo"]?["nome"];
+        veiculo.registroAtivo = row["carro"]?["registroativo"];
 
         veiculos.add(veiculo);
       }

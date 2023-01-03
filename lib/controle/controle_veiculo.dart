@@ -20,7 +20,15 @@ class ControleVeiculo {
     dao.excluir(veiculoEmEdicao);
   }
 
+  Future<void> ativarVeiculo() async {
+    dao.ativar(veiculoEmEdicao);
+  }
+
   Future<void> pesquisarVeiculo({String filtro = ""}) async {
     veiculosLista = dao.pesquisarVeiculo(filtro: filtro);
+  }
+
+  Future<void> pesquisarVeiculoDesativado({String filtro = ""}) async {
+    veiculosLista = dao.pesquisarVeiculoDesativado(filtro: filtro);
   }
 }

@@ -41,6 +41,7 @@ class _ListOrdemServicoState extends State<ListOrdemServico> {
 
   Widget _listaOrdemServico(OrdemServico ordemServico, int indice) {
     return CustomListTile(
+      registro: ordemServico.registroAtivo,
       object: ordemServico,
       textoExcluir: "Deseja realmente excluir está ordem de serviço ?",
       index: indice + 1,

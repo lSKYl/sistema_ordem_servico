@@ -40,6 +40,18 @@ class MarcaVeiculoDAO {
     }
   }
 
+  Future<void> ativar(MarcaVeiculo marca) async {
+    try {
+      (await getConexaoPostgre()).transaction((ctx) async {
+        await ctx.query("""update marcaveiculo set registroativo = true 
+        where id = @id""", substitutionValues: {"id": marca.id});
+      });
+    } catch (e) {
+      print("error");
+      print(e.toString());
+    }
+  }
+
   Future<MarcaVeiculo> carregarObjetoPorId(int id) async {
     MarcaVeiculo marca = MarcaVeiculo();
     try {
@@ -64,7 +76,7 @@ class MarcaVeiculoDAO {
     try {
       List<Map<String, Map<String, dynamic>>> results =
           await (await getConexaoPostgre()).mappedResultsQuery(
-              """SELECT id, nome from marcaveiculo where registroativo = true and lower(nome) like @filtro
+              """SELECT id, nome, registroativo from marcaveiculo where registroativo = true and lower(nome) like @filtro
     order by lower(nome)""",
               substitutionValues: {"filtro": '%$filtro%'});
 
@@ -72,6 +84,30 @@ class MarcaVeiculoDAO {
         MarcaVeiculo marca = MarcaVeiculo();
         marca.id = row["marcaveiculo"]?["id"];
         marca.nome = row["marcaveiculo"]?["nome"];
+        marca.registroAtivo = row["marcaveiculo"]?["registroativo"];
+        marcas.add(marca);
+      }
+    } catch (e) {
+      print("Error");
+      print(e.toString());
+    }
+    return marcas;
+  }
+
+  Future<List<MarcaVeiculo>> pesquisarDesativado({String filtro = ""}) async {
+    List<MarcaVeiculo> marcas = [];
+    try {
+      List<Map<String, Map<String, dynamic>>> results =
+          await (await getConexaoPostgre()).mappedResultsQuery(
+              """SELECT id, nome, registroativo from marcaveiculo where registroativo = false and lower(nome) like @filtro
+    order by lower(nome)""",
+              substitutionValues: {"filtro": '%$filtro%'});
+
+      for (final row in results) {
+        MarcaVeiculo marca = MarcaVeiculo();
+        marca.id = row["marcaveiculo"]?["id"];
+        marca.nome = row["marcaveiculo"]?["nome"];
+        marca.registroAtivo = row["marcaveiculo"]?["registroativo"];
         marcas.add(marca);
       }
     } catch (e) {

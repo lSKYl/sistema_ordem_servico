@@ -19,7 +19,23 @@ class ControleProdutoServico {
     dao.excluir(produtoServicoEmEdicao);
   }
 
+  Future<void> ativarProduto() async {
+    dao.ativar(produtoServicoEmEdicao);
+  }
+
   Future<void> pesquisarProduto({String filtroPesquisa = ""}) async {
     produtosLista = dao.pesquisar(filtro: filtroPesquisa);
+  }
+
+  Future<void> pesquisarProdutos({String filtroPesquisa = ""}) async {
+    produtosLista = dao.pesquisarProduto(filtro: filtroPesquisa);
+  }
+
+  Future<void> pesquisarServicos({String filtroPesquisa = ""}) async {
+    produtosLista = dao.pesquisarServico(filtro: filtroPesquisa);
+  }
+
+  Future<void> pesquisarProdutoDesativados({String filtroPesquisa = ""}) async {
+    produtosLista = dao.pesquisarDesativado(filtro: filtroPesquisa);
   }
 }

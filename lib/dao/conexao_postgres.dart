@@ -3,10 +3,10 @@ import 'package:postgres/postgres.dart';
 PostgreSQLConnection? _conexaoPostGre;
 
 String host = '127.0.0.1';
-String dataBaseName = "tcc";
+String dataBaseName = "sos";
 int port = 5432;
 String userName = 'postgres';
-String password = '652512';
+String password = '65251200';
 
 Future<PostgreSQLConnection> getConexaoPostgre() async {
   if (_conexaoPostGre == null || _conexaoPostGre!.isClosed) {

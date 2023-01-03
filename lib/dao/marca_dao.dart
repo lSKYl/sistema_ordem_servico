@@ -35,6 +35,18 @@ class MarcaDAO {
     }
   }
 
+  Future<void> ativar(Marca marca) async {
+    try {
+      (await getConexaoPostgre()).transaction((ctx) async {
+        await ctx.query("update marca set registroativo = true where id = @id",
+            substitutionValues: {"id": marca.id});
+      });
+    } catch (e) {
+      print('error');
+      print(e.toString());
+    }
+  }
+
   Future<Marca> carregarObjetoPorID(int id) async {
     List<Map<String, Map<String, dynamic>>> results =
         await (await getConexaoPostgre())
@@ -53,7 +65,7 @@ class MarcaDAO {
     List<Marca> marcas = [];
     List<Map<String, Map<String, dynamic>>> results =
         await (await getConexaoPostgre()).mappedResultsQuery(
-            """SELECT id, nome from marca where registroativo = true and lower(nome) like @filtro
+            """SELECT id, nome, registroativo from marca where registroativo = true and lower(nome) like @filtro
     order by lower(nome)""",
             substitutionValues: {"filtro": "%$filtro%"});
 
@@ -61,6 +73,25 @@ class MarcaDAO {
       Marca marca = Marca();
       marca.id = row["marca"]?["id"];
       marca.nome = row["marca"]?["nome"];
+      marca.registroAtivo = row["marca"]?["registroativo"];
+      marcas.add(marca);
+    }
+    return marcas;
+  }
+
+  Future<List<Marca>> pesquisarDesativados({String filtro = ""}) async {
+    List<Marca> marcas = [];
+    List<Map<String, Map<String, dynamic>>> results =
+        await (await getConexaoPostgre()).mappedResultsQuery(
+            """SELECT id, nome, registroativo from marca where registroativo = false and lower(nome) like @filtro
+    order by lower(nome)""",
+            substitutionValues: {"filtro": "%$filtro%"});
+
+    for (final row in results) {
+      Marca marca = Marca();
+      marca.id = row["marca"]?["id"];
+      marca.nome = row["marca"]?["nome"];
+      marca.registroAtivo = row["marca"]?["registroativo"];
       marcas.add(marca);
     }
     return marcas;
