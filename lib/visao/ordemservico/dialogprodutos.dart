@@ -32,12 +32,15 @@ class _DialogProdutosState extends State<DialogProdutos> {
   static const _locale = 'pt_Br';
   String get _currency =>
       NumberFormat.compactSimpleCurrency(locale: _locale).currencySymbol;
+  bool produtosServicos = true;
+  bool produto = false;
+  bool servicos = false;
 
   @override
   void initState() {
     super.initState();
     setState(() {
-      _controleProdutoServico.pesquisarProduto();
+      _controleProdutoServico.pesquisar();
     });
   }
 
@@ -45,6 +48,13 @@ class _DialogProdutosState extends State<DialogProdutos> {
     if (_chaveForm.currentState != null &&
         _chaveForm.currentState!.validate()) {
       _chaveForm.currentState!.save();
+      produtos.calculoCusto();
+      produtos.calcularTotal();
+
+      widget.ordem.adicionarServico(produtos);
+
+      widget.callback();
+      Navigator.of(context).pop();
     }
   }
 
@@ -64,6 +74,13 @@ class _DialogProdutosState extends State<DialogProdutos> {
       (oldValue, newValue) => newValue.copyWith(
         text: newValue.text.replaceAll('.', ','),
       ),
+    );
+  }
+
+  Widget textRadio(String dado) {
+    return Text(
+      dado,
+      style: const TextStyle(fontSize: 14),
     );
   }
 
@@ -94,6 +111,7 @@ class _DialogProdutosState extends State<DialogProdutos> {
                               .carregarProduto(produto)
                               .then((value) {
                             produtos.produtoServico = value;
+                            produtos.valorProduto = value.valorVista;
                           });
                         });
                       },
@@ -123,18 +141,79 @@ class _DialogProdutosState extends State<DialogProdutos> {
       child: StatefulBuilder(
         builder: (context, setState) {
           return AlertDialog(
-            title: SearchFieldDialog(
-              controller: _controladorCampoPesquisa,
-              onChanged: (text) {
-                setState(
-                  () {
-                    _controleProdutoServico.pesquisarProduto(
-                        filtroPesquisa:
-                            _controladorCampoPesquisa.text.toLowerCase());
-                    setState;
+            title: Column(
+              children: [
+                SearchFieldDialog(
+                  controller: _controladorCampoPesquisa,
+                  onChanged: (text) {
+                    setState(
+                      () {
+                        if (produtosServicos) {
+                          _controleProdutoServico.pesquisar(
+                              filtroPesquisa:
+                                  _controladorCampoPesquisa.text.toLowerCase());
+                        } else if (produto) {
+                          _controleProdutoServico.pesquisarProdutos(
+                              filtroPesquisa:
+                                  _controladorCampoPesquisa.text.toLowerCase());
+                        } else if (servicos) {
+                          _controleProdutoServico.pesquisarServicos(
+                              filtroPesquisa:
+                                  _controladorCampoPesquisa.text.toLowerCase());
+                        }
+                        setState;
+                      },
+                    );
                   },
-                );
-              },
+                ),
+                Row(
+                  children: [
+                    Radio(
+                        value: true,
+                        groupValue: produtosServicos,
+                        onChanged: (_) {
+                          setState(
+                            () {
+                              produtosServicos = true;
+                              produto = false;
+                              servicos = false;
+                              _controleProdutoServico.pesquisar();
+                            },
+                          );
+                        }),
+                    textRadio("Produtos/Serviços"),
+                    Radio(
+                        value: true,
+                        groupValue: produto,
+                        onChanged: (_) {
+                          setState(
+                            () {
+                              produtosServicos = false;
+                              produto = true;
+                              servicos = false;
+                              _controleProdutoServico.pesquisarProdutos();
+                            },
+                          );
+                        }),
+                    textRadio("Produtos"),
+                    Radio(
+                      value: true,
+                      groupValue: servicos,
+                      onChanged: (_) {
+                        setState(
+                          () {
+                            produtosServicos = false;
+                            produto = false;
+                            servicos = true;
+                            _controleProdutoServico.pesquisarServicos();
+                          },
+                        );
+                      },
+                    ),
+                    textRadio("Serviços")
+                  ],
+                )
+              ],
             ),
             content: SizedBox(
               height: 500,
@@ -145,10 +224,12 @@ class _DialogProdutosState extends State<DialogProdutos> {
                   Row(
                     children: [
                       Expanded(
-                        child: TextFieldBorder(
-                          read: true,
+                        child: CustomTextField(
+                          validator: validar,
+                          obscureText: false,
+                          readonly: true,
                           label: "Produto",
-                          controler: TextEditingController(
+                          controller: TextEditingController(
                               text: produtos.produtoServico.nome),
                         ),
                       ),
@@ -179,14 +260,24 @@ class _DialogProdutosState extends State<DialogProdutos> {
                       ),
                       const SizedBox(width: 10),
                       Expanded(
-                          child: TextFieldBorder(
-                              read: true,
-                              label: "Preço a vista",
-                              controler: TextEditingController(
-                                  text: produtos.produtoServico.valorVista
+                          child: CustomTextField(
+                              obscureText: false,
+                              validator: validar,
+                              readonly: false,
+                              label: "Valor",
+                              onChanged: (text) {
+                                produtos.produtoServico.valorVista =
+                                    double.parse(text);
+                              },
+                              onSaved: (String? value) {
+                                produtos.valorProduto =
+                                    double.parse(value!.replaceAll(',', '.'));
+                              },
+                              controller: TextEditingController(
+                                  text: produtos.valorProduto
                                       .toStringAsFixed(2)
                                       .replaceAll('.', ',')),
-                              preffix: Text(_currency))),
+                              prefix: Text(_currency))),
                       const SizedBox(width: 10),
                       Expanded(
                         child: CustomTextField(
@@ -241,13 +332,6 @@ class _DialogProdutosState extends State<DialogProdutos> {
               TextButton(
                   onPressed: () {
                     salvar(context);
-                    produtos.calculoCusto();
-                    produtos.calcularTotal();
-
-                    widget.ordem.adicionarServico(produtos);
-                    Navigator.pop(context);
-
-                    widget.callback();
                   },
                   child: const Text("Salvar"))
             ],

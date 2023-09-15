@@ -15,6 +15,20 @@ class ClienteDados extends StatefulWidget {
 }
 
 class _ClienteDadosState extends State<ClienteDados> {
+  final _chaveForm = GlobalKey<FormState>();
+
+  Future<void> salvar(BuildContext context) async {
+    if (_chaveForm.currentState != null &&
+        _chaveForm.currentState!.validate()) {
+      _chaveForm.currentState!.save();
+
+      widget.controle.salvarClienteEmEdicao().then((_) {
+        if (widget.onSaved != null) widget.onSaved!();
+        Navigator.of(context).pop();
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
@@ -34,10 +48,13 @@ class _ClienteDadosState extends State<ClienteDados> {
         ),
         body: TabBarView(children: [
           FormCliente(
+            salvar: salvar,
+            chaveForm: _chaveForm,
             controle: widget.controle,
             onSaved: widget.onSaved,
           ),
           ContatoClienteForm(
+            chaveForm: _chaveForm,
             controle: widget.controle,
             onSaved: widget.onSaved,
           )

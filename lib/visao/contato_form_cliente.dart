@@ -8,14 +8,27 @@ import '../modelo/contato.dart';
 class ContatoClienteForm extends StatefulWidget {
   ControlePessoa? controle;
   Function()? onSaved;
-  ContatoClienteForm({Key? key, this.controle, this.onSaved}) : super(key: key);
 
+  ContatoClienteForm({
+    Key? key,
+    this.controle,
+    this.onSaved,
+    required this.chaveForm,
+  }) : super(key: key);
+  GlobalKey<FormState> chaveForm = GlobalKey<FormState>();
   @override
   State<ContatoClienteForm> createState() => _ContatoClienteFormState();
 }
 
 class _ContatoClienteFormState extends State<ContatoClienteForm> {
   final _chaveForm = GlobalKey<FormState>();
+
+  Future<void> salvar(BuildContext context) async {
+    widget.controle!.salvarClienteEmEdicao().then((_) {
+      if (widget.onSaved != null) widget.onSaved!();
+      Navigator.of(context).pop();
+    });
+  }
 
   Widget _listaContatos(Contato contato, int indice) {
     return Container(
@@ -100,80 +113,91 @@ class _ContatoClienteFormState extends State<ContatoClienteForm> {
     return null;
   }
 
-  Future<void> salvar(BuildContext context) async {
+  Future<void> salvarContato(BuildContext context, Contato contato) async {
     if (_chaveForm.currentState != null &&
         _chaveForm.currentState!.validate()) {
       _chaveForm.currentState!.save();
+      widget.controle!.clienteEmEdicao.contatos.add(contato);
+      setState(() {
+        Navigator.of(context).pop();
+      });
     }
   }
 
   Widget build(BuildContext context) {
     return Scaffold(
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          Contato contato = Contato();
-          showDialog(
-              context: context,
-              builder: (BuildContext builder) {
-                return AlertDialog(
-                  shape: const RoundedRectangleBorder(
-                      borderRadius: BorderRadius.all(Radius.circular(20))),
-                  title: const Text('Cadastro Contato'),
-                  content: Form(
-                    key: _chaveForm,
-                    child: SizedBox(
-                      width: MediaQuery.of(context).size.width > 1000
-                          ? (MediaQuery.of(context).size.width - 1000) / 2
-                          : 10,
-                      height: 170,
-                      child: Column(
-                        children: [
-                          CustomTextField(
-                            readonly: false,
-                            obscureText: false,
-                            label: 'Número',
-                            validator: validar,
-                            onSaved: (String? value) {
-                              contato.numero = value;
-                            },
-                            maxlength: 14,
-                          ),
-                          const SizedBox(
-                            height: 10,
-                          ),
-                          CustomTextField(
-                            label: 'Tipo',
-                            readonly: false,
-                            obscureText: false,
-                            validator: validar,
-                            onSaved: (String? value) {
-                              contato.tipo = value;
-                            },
-                            maxlength: 14,
-                          )
-                        ],
+      floatingActionButton: Wrap(direction: Axis.vertical, children: [
+        FloatingActionButton(
+          onPressed: () {
+            Contato contato = Contato();
+            showDialog(
+                context: context,
+                builder: (BuildContext builder) {
+                  return AlertDialog(
+                    shape: const RoundedRectangleBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(20))),
+                    title: const Text('Cadastro Contato'),
+                    content: Form(
+                      key: _chaveForm,
+                      child: SizedBox(
+                        width: MediaQuery.of(context).size.width > 1000
+                            ? (MediaQuery.of(context).size.width - 1000) / 2
+                            : 10,
+                        height: 170,
+                        child: Column(
+                          children: [
+                            CustomTextField(
+                              readonly: false,
+                              obscureText: false,
+                              label: 'Número',
+                              validator: validar,
+                              onSaved: (String? value) {
+                                contato.numero = value;
+                              },
+                              maxlength: 14,
+                            ),
+                            const SizedBox(
+                              height: 10,
+                            ),
+                            CustomTextField(
+                              label: 'Tipo',
+                              readonly: false,
+                              obscureText: false,
+                              validator: validar,
+                              onSaved: (String? value) {
+                                contato.tipo = value;
+                              },
+                              maxlength: 14,
+                            )
+                          ],
+                        ),
                       ),
                     ),
-                  ),
-                  actionsAlignment: MainAxisAlignment.center,
-                  actions: [
-                    TextButton(
-                        onPressed: () {
-                          salvar(context);
-                          widget.controle!.clienteEmEdicao.contatos
-                              .add(contato);
-                          setState(() {
-                            Navigator.of(context).pop();
-                          });
-                        },
-                        child: const Text('Salvar'))
-                  ],
-                );
-              });
-        },
-        child: const Icon(Icons.add),
-      ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+                    actionsAlignment: MainAxisAlignment.center,
+                    actions: [
+                      TextButton(
+                          onPressed: () {
+                            salvarContato(context, contato);
+                          },
+                          child: const Text('Salvar'))
+                    ],
+                  );
+                });
+          },
+          child: const Icon(Icons.add),
+        ),
+        const SizedBox(
+          height: 10,
+        ),
+        FloatingActionButton.extended(
+          onPressed: () {
+            salvar(context);
+          },
+          label: const Text("Salvar"),
+          icon: const Icon(Icons.add),
+        )
+      ]),
+      floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
       body: Padding(
         padding: EdgeInsets.only(
             top: 10,

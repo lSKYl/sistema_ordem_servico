@@ -18,6 +18,9 @@ class OrdemDialogCliente extends StatefulWidget {
 class _OrdemDialogClienteState extends State<OrdemDialogCliente> {
   final TextEditingController _controladorCampoPesquisa =
       TextEditingController();
+  bool clientes = true;
+  bool clientesFisicos = false;
+  bool clientesJuridicos = false;
 
   @override
   void initState() {
@@ -25,6 +28,13 @@ class _OrdemDialogClienteState extends State<OrdemDialogCliente> {
     setState(() {
       _controlePessoa.pesquisarClientes();
     });
+  }
+
+  Widget textRadio(String texto) {
+    return Text(
+      texto,
+      style: TextStyle(fontSize: 14),
+    );
   }
 
   final ControlePessoa _controlePessoa = ControlePessoa();
@@ -94,16 +104,77 @@ class _OrdemDialogClienteState extends State<OrdemDialogCliente> {
   Widget build(BuildContext context) {
     return StatefulBuilder(builder: (context, setState) {
       return AlertDialog(
-        title: SearchFieldDialog(
-          hint: "Escreva o cliente que deseja pesquisar...",
-          controller: _controladorCampoPesquisa,
-          onChanged: ((_) {
-            setState(() {
-              _controlePessoa.pesquisarClientes(
-                  filtroPesquisa: _controladorCampoPesquisa.text.toLowerCase());
-              setState;
-            });
-          }),
+        title: Column(
+          children: [
+            SearchFieldDialog(
+              hint: "Escreva o cliente que deseja pesquisar...",
+              controller: _controladorCampoPesquisa,
+              onChanged: ((_) {
+                setState(() {
+                  if (clientes) {
+                    _controlePessoa.pesquisarClientes(
+                        filtroPesquisa:
+                            _controladorCampoPesquisa.text.toLowerCase());
+                  } else if (clientesFisicos) {
+                    _controlePessoa.pesquisarClientesFisicos(
+                        filtroPesquisa:
+                            _controladorCampoPesquisa.text.toLowerCase());
+                  } else if (clientesJuridicos) {
+                    _controlePessoa.pesquisarClientesJuridicos(
+                        filtroPesquisa:
+                            _controladorCampoPesquisa.text.toLowerCase());
+                  }
+                  setState;
+                });
+              }),
+            ),
+            Row(
+              children: [
+                Radio(
+                    value: true,
+                    groupValue: clientes,
+                    onChanged: (_) {
+                      setState(
+                        () {
+                          clientes = true;
+                          clientesFisicos = false;
+                          clientesJuridicos = false;
+                          _controlePessoa.pesquisarClientes();
+                        },
+                      );
+                    }),
+                textRadio("Clientes físicos/jurídicos"),
+                Radio(
+                    value: true,
+                    groupValue: clientesFisicos,
+                    onChanged: (_) {
+                      setState(
+                        () {
+                          clientes = false;
+                          clientesFisicos = true;
+                          clientesJuridicos = false;
+                          _controlePessoa.pesquisarClientesFisicos();
+                        },
+                      );
+                    }),
+                textRadio("Clientes físicos"),
+                Radio(
+                    value: true,
+                    groupValue: clientesJuridicos,
+                    onChanged: (_) {
+                      setState(
+                        () {
+                          clientes = false;
+                          clientesFisicos = false;
+                          clientesJuridicos = true;
+                          _controlePessoa.pesquisarClientesJuridicos();
+                        },
+                      );
+                    }),
+                textRadio("Clientes jurídicos")
+              ],
+            )
+          ],
         ),
         content: _listaCliente(),
       );

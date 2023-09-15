@@ -23,7 +23,7 @@ class ControleProdutoServico {
     dao.ativar(produtoServicoEmEdicao);
   }
 
-  Future<void> pesquisarProduto({String filtroPesquisa = ""}) async {
+  Future<void> pesquisar({String filtroPesquisa = ""}) async {
     produtosLista = dao.pesquisar(filtro: filtroPesquisa);
   }
 

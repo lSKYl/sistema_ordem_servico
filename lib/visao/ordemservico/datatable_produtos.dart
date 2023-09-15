@@ -87,7 +87,7 @@ class _DataTableProdutosState extends State<DataTableProdutos> {
                     : Text(
                         "${produto.qtd.toStringAsFixed(2).replaceAll(".", ",")} ${produto.produtoServico.un}")),
                 DataCell(Text(
-                    "R\$${produto.produtoServico.valorVista.toStringAsFixed(2).replaceAll(".", ",")}")),
+                    "R\$${produto.valorProduto.toStringAsFixed(2).replaceAll(".", ",")}")),
                 DataCell(Text(
                     "R\$${produto.desconto.toStringAsFixed(2).replaceAll(".", ",")}")),
                 DataCell(Text(

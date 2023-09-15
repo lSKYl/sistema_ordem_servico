@@ -50,7 +50,7 @@ class _InkCustomStackState extends State<InkCustomStack> {
             width: widget.largura,
             child: Center(
               child: widget.marca == false
-                  ? const Text("x")
+                  ? const Text("")
                   : const Text(
                       "X",
                       style: TextStyle(color: Colors.red, fontSize: 24),

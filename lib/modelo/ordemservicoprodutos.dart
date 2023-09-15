@@ -9,6 +9,7 @@ class OrdemServicoProdutos {
   double _custoProdutos = 0.0;
   double _custoMaoObra = 0.0;
   double _desconto = 0.0;
+  double valorProduto = 0.0;
   double _precoTotalPrazo = 0.0;
   double _precoTotalVista = 0.0;
 

@@ -90,7 +90,7 @@ class CustomListTile extends StatelessWidget {
                           });
                     },
                     icon: const Icon(Icons.delete),
-                    color: Colors.red,
+                    color: Colors.redAccent[700],
                   )
                 ] else
                   (IconButton(

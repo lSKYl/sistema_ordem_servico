@@ -17,11 +17,11 @@ class PdfInvoiceService {
         (await rootBundle.load('assets/img/logo.png')).buffer.asUint8List();
     final pdf = pw.Document();
     pdf.addPage(
-      pw.Page(
+      pw.MultiPage(
         margin: EdgeInsets.all(20),
         pageFormat: PdfPageFormat.a4,
         build: (pw.Context context) {
-          return pw.Column(children: [
+          return [
             buildHeader(image, ordem),
             Divider(),
             buildCliente(ordem),
@@ -32,7 +32,7 @@ class PdfInvoiceService {
             Divider(),
             valorTotal(ordem),
             buildFooter()
-          ]);
+          ];
         },
       ),
     );
@@ -79,7 +79,7 @@ class PdfInvoiceService {
       return [
         "${produto.produtoServico.nome} ${produto.produtoServico.marca.nome == null ? "" : produto.produtoServico.marca.nome}",
         "${produto.qtd.toStringAsFixed(2).replaceAll(".", ",")}",
-        "R\$${produto.produtoServico.valorVista.toStringAsFixed(2).replaceAll(".", ",")}",
+        "R\$${produto.valorProduto.toStringAsFixed(2).replaceAll(".", ",")}",
         "R\$${produto.desconto.toStringAsFixed(2).replaceAll(".", ",")}",
         "R\$${produto.precoTotalVista.toStringAsFixed(2).replaceAll(".", ",")}"
       ];

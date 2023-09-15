@@ -17,6 +17,7 @@ class _ListOrdemServicoState extends State<ListOrdemServico> {
   final ControleOrdemServico _controle = ControleOrdemServico();
   final TextEditingController _controladorCampoPesquisa =
       TextEditingController();
+
   Icon customIcon = const Icon(Icons.search);
   Widget customSearchBar = const Text('Lista de Ordem de Serviços');
   var formatterData = DateFormat('dd/MM/yy');
@@ -30,11 +31,14 @@ class _ListOrdemServicoState extends State<ListOrdemServico> {
   }
 
   Color corLista(OrdemServico ordem) {
+    DateTime data = DateTime.now();
     if (ordem.situacaoAtual == "Finalizado") {
-      return Color.fromARGB(255, 52, 151, 56);
+      return const Color.fromARGB(255, 52, 151, 56);
+    } else if (ordem.previsaoEntrega.day == data.day) {
+      return Colors.orange[900]!;
     } else if (ordem.previsaoEntrega.isBefore(DateTime.now()) &&
         ordem.situacaoAtual != "Finalizado") {
-      return const Color.fromARGB(255, 163, 35, 35);
+      return Color.fromARGB(255, 71, 24, 24);
     }
     return Colors.white;
   }

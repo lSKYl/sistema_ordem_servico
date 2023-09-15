@@ -92,7 +92,7 @@ class OrdemServicoDAO {
                 "vetorsedan": ordemServico.vetorSedan,
                 "vetorpickup": ordemServico.vetorCamionete,
                 "vetorhatch": ordemServico.vetorHatch,
-                "vetorsuv": ordemServico.vetorSuv
+                "vetorsuv": ordemServico.vetorSuv,
               });
           for (final row in insertResult) {
             ordemServico.id = row["ordemservico"]?["id"];
@@ -105,8 +105,8 @@ class OrdemServicoDAO {
         for (OrdemServicoProdutos produtos
             in ordemServico.ordemservicoprodutos) {
           await ctx
-              .query("""INSERT INTO ordemservicoprodutos (id_produtoservico, qtd, valorprodutos, valormaoobra, desconto, ordemservico_id, precototalvista, precototalprazo) 
-              VALUES (@id_produtoservico, @qtd, @valorprodutos, @valormaoobra, @desconto, @ordemservico_id, @precototalvista, @precototalprazo) returning id""",
+              .query("""INSERT INTO ordemservicoprodutos (id_produtoservico, qtd, valorprodutos, valormaoobra, desconto, ordemservico_id, precototalvista, precototalprazo, valor) 
+              VALUES (@id_produtoservico, @qtd, @valorprodutos, @valormaoobra, @desconto, @ordemservico_id, @precototalvista, @precototalprazo, @valor) returning id""",
                   substitutionValues: {
                 "id_produtoservico": produtos.produtoServico.id,
                 "qtd": produtos.qtd,
@@ -121,7 +121,8 @@ class OrdemServicoDAO {
                     : produtos.precoTotalVista,
                 "precototalprazo": produtos.precoTotalPrazo == null
                     ? 0
-                    : produtos.precoTotalPrazo
+                    : produtos.precoTotalPrazo,
+                "valor": produtos.valorProduto
               });
         }
 
@@ -424,6 +425,8 @@ left join marca as marca on marca.id = produto.marca_id where ordemservico_id = 
             double.parse(row["produtoservico"]?["precoprazo"]);
         produtos.produtoServico.un = row["produtoservico"]?["un"];
         produtos.qtd = double.parse(row["ordemservicoprodutos"]?["qtd"]);
+        produtos.valorProduto =
+            double.parse(row["ordemservicoprodutos"]?["valor"]);
         produtos.custoProdutos =
             double.parse(row["ordemservicoprodutos"]?["valorprodutos"]);
         produtos.custoMaoObra =

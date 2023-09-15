@@ -27,7 +27,7 @@ class _ListProdutoState extends State<ListProduto> {
   void initState() {
     super.initState();
     setState(() {
-      _controle.pesquisarProduto();
+      _controle.pesquisar();
     });
   }
 
@@ -60,7 +60,7 @@ class _ListProdutoState extends State<ListProduto> {
                 controle: _controle,
                 onSaved: (() {
                   setState(() {
-                    _controle.pesquisarProduto();
+                    _controle.pesquisar();
                   });
                 }),
               ),
@@ -114,7 +114,7 @@ class _ListProdutoState extends State<ListProduto> {
                       onChanged: (text) {
                         setState(() {
                           if (produtosAtivados) {
-                            _controle.pesquisarProduto(
+                            _controle.pesquisar(
                                 filtroPesquisa: _controladorCampoPesquisa.text
                                     .toLowerCase());
                           } else if (produtos) {
@@ -153,7 +153,7 @@ class _ListProdutoState extends State<ListProduto> {
                               controle: _controle,
                               onSaved: () {
                                 setState(() {
-                                  _controle.pesquisarProduto();
+                                  _controle.pesquisar();
                                 });
                               },
                             )));
@@ -172,7 +172,7 @@ class _ListProdutoState extends State<ListProduto> {
                         controle: _controle,
                         onSaved: () {
                           setState(() {
-                            _controle.pesquisarProduto();
+                            _controle.pesquisar();
                           });
                         },
                       )));
@@ -193,7 +193,7 @@ class _ListProdutoState extends State<ListProduto> {
                       produtos = false;
                       servicos = false;
                       produtosDesativados = false;
-                      _controle.pesquisarProduto();
+                      _controle.pesquisar();
                     });
                   }),
               const Text("Produtos e Serviços ativos"),

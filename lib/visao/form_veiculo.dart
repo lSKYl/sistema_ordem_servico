@@ -30,6 +30,9 @@ class _FormVeiculoState extends State<FormVeiculo> {
           : widget.controle!.veiculoEmEdicao.cliente.nome);
   TextEditingController _controladorPesquisaCliente = TextEditingController();
   TextEditingController _controladorPesquisaMarca = TextEditingController();
+  bool clientes = true;
+  bool fisicos = false;
+  bool juridicos = false;
 
   Future<void> salvar(BuildContext context) async {
     if (_chaveForm.currentState != null &&
@@ -41,6 +44,13 @@ class _FormVeiculoState extends State<FormVeiculo> {
         Navigator.of(context).pop();
       });
     }
+  }
+
+  Widget textRadio(String texto) {
+    return Text(
+      texto,
+      style: TextStyle(fontSize: 14),
+    );
   }
 
   Widget listaMarcas() {
@@ -91,7 +101,7 @@ class _FormVeiculoState extends State<FormVeiculo> {
   Widget listaClientes() {
     return SizedBox(
       width: 500,
-      height: 500,
+      height: 300,
       child: FutureBuilder(
           future: _controlePessoa.clientesPesquisados,
           builder: (context, snapshot) {
@@ -185,36 +195,43 @@ class _FormVeiculoState extends State<FormVeiculo> {
                   onSaved: (String? value) {
                     widget.controle!.veiculoEmEdicao.modelo = value;
                   },
-                ),
-                const SizedBox(
-                  height: 10,
-                ),
-                CustomTextField(
-                  label: "Placa",
-                  obscureText: false,
-                  readonly: false,
-                  maxlength: 7,
-                  controller: TextEditingController(
-                      text: widget.controle!.veiculoEmEdicao.placa),
-                  validator: validar,
-                  onSaved: (String? value) {
-                    widget.controle!.veiculoEmEdicao.placa = value;
+                  onChanged: (text) {
+                    widget.controle!.veiculoEmEdicao.modelo = text;
                   },
                 ),
                 const SizedBox(
                   height: 10,
                 ),
                 CustomTextField(
-                  label: "Tipo",
-                  obscureText: false,
-                  readonly: false,
-                  maxlength: 30,
-                  controller: TextEditingController(
-                      text: widget.controle!.veiculoEmEdicao.tipodeVeiculo),
-                  onSaved: (String? value) {
-                    widget.controle!.veiculoEmEdicao.tipodeVeiculo = value;
-                  },
+                    label: "Placa",
+                    obscureText: false,
+                    readonly: false,
+                    maxlength: 7,
+                    controller: TextEditingController(
+                        text: widget.controle!.veiculoEmEdicao.placa),
+                    validator: validar,
+                    onSaved: (String? value) {
+                      widget.controle!.veiculoEmEdicao.placa = value;
+                    },
+                    onChanged: (text) {
+                      widget.controle!.veiculoEmEdicao.placa = text;
+                    }),
+                const SizedBox(
+                  height: 10,
                 ),
+                CustomTextField(
+                    label: "Tipo",
+                    obscureText: false,
+                    readonly: false,
+                    maxlength: 30,
+                    controller: TextEditingController(
+                        text: widget.controle!.veiculoEmEdicao.tipodeVeiculo),
+                    onSaved: (String? value) {
+                      widget.controle!.veiculoEmEdicao.tipodeVeiculo = value;
+                    },
+                    onChanged: (text) {
+                      widget.controle!.veiculoEmEdicao.tipodeVeiculo = text;
+                    }),
                 const SizedBox(
                   height: 10,
                 ),
@@ -271,18 +288,74 @@ class _FormVeiculoState extends State<FormVeiculo> {
                         builder: (BuildContext builder) {
                           return StatefulBuilder(builder: ((context, setState) {
                             return AlertDialog(
-                              title: SearchFieldDialog(
-                                controller: _controladorPesquisaCliente,
-                                onChanged: (text) {
-                                  setState((() {
-                                    _controlePessoa.pesquisarClientes(
-                                        filtroPesquisa:
-                                            _controladorPesquisaCliente.text
-                                                .toLowerCase());
-                                  }));
-                                },
-                                hint:
-                                    "Digite o cliente que deseja pesquisar...",
+                              title: Column(
+                                children: [
+                                  SearchFieldDialog(
+                                    controller: _controladorPesquisaCliente,
+                                    onChanged: (text) {
+                                      setState(
+                                        (() {
+                                          _controlePessoa.pesquisarClientes(
+                                              filtroPesquisa:
+                                                  _controladorPesquisaCliente
+                                                      .text
+                                                      .toLowerCase());
+                                        }),
+                                      );
+                                    },
+                                    hint:
+                                        "Digite o cliente que deseja pesquisar...",
+                                  ),
+                                  Row(
+                                    children: [
+                                      Radio(
+                                          value: true,
+                                          groupValue: clientes,
+                                          onChanged: (_) {
+                                            setState(
+                                              () {
+                                                clientes = true;
+                                                fisicos = false;
+                                                juridicos = false;
+                                                _controlePessoa
+                                                    .pesquisarClientes();
+                                              },
+                                            );
+                                          }),
+                                      textRadio("Clientes Físicos/Jurídicos"),
+                                      Radio(
+                                          value: true,
+                                          groupValue: fisicos,
+                                          onChanged: (_) {
+                                            setState(
+                                              () {
+                                                clientes = false;
+                                                fisicos = true;
+                                                juridicos = false;
+                                                _controlePessoa
+                                                    .pesquisarClientesFisicos();
+                                              },
+                                            );
+                                          }),
+                                      textRadio("Clientes Físicos"),
+                                      Radio(
+                                          value: true,
+                                          groupValue: juridicos,
+                                          onChanged: (_) {
+                                            setState(
+                                              () {
+                                                clientes = false;
+                                                fisicos = false;
+                                                juridicos = true;
+                                                _controlePessoa
+                                                    .pesquisarClientesJuridicos();
+                                              },
+                                            );
+                                          }),
+                                      textRadio("Cliente Jurídicos")
+                                    ],
+                                  )
+                                ],
                               ),
                               content: listaClientes(),
                             );
@@ -294,31 +367,35 @@ class _FormVeiculoState extends State<FormVeiculo> {
                   height: 10,
                 ),
                 CustomTextField(
-                  label: "Cor",
-                  obscureText: false,
-                  readonly: false,
-                  maxlength: 25,
-                  controller: TextEditingController(
-                      text: widget.controle!.veiculoEmEdicao.cor),
-                  onSaved: (String? value) {
-                    widget.controle!.veiculoEmEdicao.cor = value;
-                  },
-                ),
+                    label: "Cor",
+                    obscureText: false,
+                    readonly: false,
+                    maxlength: 25,
+                    controller: TextEditingController(
+                        text: widget.controle!.veiculoEmEdicao.cor),
+                    onSaved: (String? value) {
+                      widget.controle!.veiculoEmEdicao.cor = value;
+                    },
+                    onChanged: (text) {
+                      widget.controle!.veiculoEmEdicao.cor = text;
+                    }),
                 const SizedBox(
                   height: 10,
                 ),
                 CustomTextField(
-                  label: "Obs",
-                  obscureText: false,
-                  readonly: false,
-                  maxlength: 200,
-                  maxlines: 5,
-                  controller: TextEditingController(
-                      text: widget.controle!.veiculoEmEdicao.obs),
-                  onSaved: (String? value) {
-                    widget.controle!.veiculoEmEdicao.obs = value;
-                  },
-                )
+                    label: "Obs",
+                    obscureText: false,
+                    readonly: false,
+                    maxlength: 200,
+                    maxlines: 5,
+                    controller: TextEditingController(
+                        text: widget.controle!.veiculoEmEdicao.obs),
+                    onSaved: (String? value) {
+                      widget.controle!.veiculoEmEdicao.obs = value;
+                    },
+                    onChanged: (text) {
+                      widget.controle!.veiculoEmEdicao.modelo = text;
+                    })
               ]),
             ))
       ]),
